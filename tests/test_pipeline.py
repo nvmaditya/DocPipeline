@@ -11,6 +11,7 @@ from pptx import Presentation
 import pytest
 
 import docpipe.pipeline as pipeline_mod
+from docpipe.query import build_rag_prompt, collect_sources
 
 
 def _make_pdf(path: Path, text: str) -> None:
@@ -138,4 +139,92 @@ def test_pipeline_ingest_and_query(tmp_path: Path) -> None:
         assert stats["chunks"] >= 2
     finally:
         pipe2.close()
+        monkeypatch.undo()
+
+
+def test_rag_prompt_and_sources_helpers() -> None:
+    chunks = [
+        {
+            "score": 0.9,
+            "chunk_id": 1,
+            "doc_id": "d1",
+            "file_name": "a.md",
+            "file_path": "/tmp/a.md",
+            "file_type": "md",
+            "page_number": None,
+            "chunk_index": 0,
+            "chunk_text": "Requirement one is Python 3.11.",
+            "heading_context": "Req",
+        }
+    ]
+    prompt = build_rag_prompt("What is required?", chunks)
+    sources = collect_sources(chunks)
+    assert "What is required?" in prompt
+    assert "Requirement one" in prompt
+    assert len(sources) == 1
+    assert sources[0]["file_name"] == "a.md"
+
+
+def test_pipeline_ask_with_mock_llm(tmp_path: Path) -> None:
+    docs_dir = tmp_path / "docs"
+    docs_dir.mkdir()
+    (docs_dir / "sample.txt").write_text("The requirement is Python 3.11.", encoding="utf-8")
+
+    store_dir = tmp_path / "store"
+    cfg_path = tmp_path / "config.yaml"
+    cfg_path.write_text(
+        "\n".join(
+            [
+                "chunking:",
+                "  strategy: recursive",
+                "  chunk_size: 128",
+                "  chunk_overlap: 16",
+                "embedding:",
+                "  model: sentence-transformers/all-MiniLM-L6-v2",
+                "  batch_size: 8",
+                "  device: cpu",
+                "  normalize: true",
+                "faiss:",
+                "  index_type: flat",
+                "store:",
+                f"  faiss_path: {(store_dir / 'faiss.index').as_posix()}",
+                f"  sqlite_path: {(store_dir / 'metadata.db').as_posix()}",
+                "query:",
+                "  top_k: 3",
+                "  score_threshold: 0.0",
+                "  llm_backend: ollama",
+                "  llm_model: llama3.2",
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    class DummyEmbedder:
+        def __init__(self, *args, **kwargs) -> None:
+            pass
+
+        def encode(self, texts):
+            vectors = []
+            for text in texts:
+                values = [float(len(text)), float(sum(1 for c in text.lower() if c in "aeiou")), 1.0, 0.5]
+                vectors.append(values)
+            arr = np.asarray(vectors, dtype=np.float32)
+            norms = np.linalg.norm(arr, axis=1, keepdims=True)
+            norms[norms == 0] = 1.0
+            return arr / norms
+
+    monkeypatch = pytest.MonkeyPatch()
+    monkeypatch.setattr(pipeline_mod, "Embedder", DummyEmbedder)
+
+    pipe = pipeline_mod.Pipeline(config=str(cfg_path))
+    try:
+        assert pipe.ingest(str(docs_dir)) == 1
+        answer = pipe.ask(
+            "What is the requirement?",
+            llm_client=lambda prompt, model: f"Mocked answer from {model}",
+        )
+        assert "Mocked answer" in answer["response"]
+        assert answer["sources"]
+    finally:
+        pipe.close()
         monkeypatch.undo()
