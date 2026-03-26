@@ -25,7 +25,11 @@ class Pipeline:
         embedding_cfg = cfg.get("embedding", {})
         store_cfg = cfg.get("store", {})
 
-        self.router = ExtractorRouter(scanned_threshold=int(extraction_cfg.get("scanned_threshold", 50)))
+        self.router = ExtractorRouter(
+            scanned_threshold=int(extraction_cfg.get("scanned_threshold", 50)),
+            ocr_engine=str(extraction_cfg.get("ocr_engine", "none")),
+            ocr_language=str(extraction_cfg.get("ocr_language", "eng")),
+        )
         self.chunker = RecursiveChunker(
             chunk_size=int(chunk_cfg.get("chunk_size", 512)),
             chunk_overlap=int(chunk_cfg.get("chunk_overlap", 64)),
@@ -49,14 +53,14 @@ class Pipeline:
         ingested = 0
         for file_path in files:
             try:
-                self._ingest_file(str(file_path))
-                ingested += 1
+                if self._ingest_file(str(file_path)):
+                    ingested += 1
             except ValueError:
                 # Ignore unsupported formats in directory ingestion.
                 continue
         return ingested
 
-    def _ingest_file(self, file_path: str) -> None:
+    def _ingest_file(self, file_path: str) -> bool:
         extractor = self.router.route(file_path)
         records = extractor.extract(file_path)
         cleaned_records = []
@@ -68,7 +72,7 @@ class Pipeline:
                 cleaned_records.append(rec)
 
         if not cleaned_records:
-            return
+            return False
 
         path_obj = Path(file_path)
         doc_meta = {
@@ -82,7 +86,7 @@ class Pipeline:
 
         chunks = self.chunker.chunk(cleaned_records, doc_meta)
         if not chunks:
-            return
+            return False
 
         start_chunk_id = self.sqlite.next_chunk_id()
         if start_chunk_id != self.faiss.count():
@@ -93,6 +97,7 @@ class Pipeline:
         self.sqlite.add_document(doc_meta, total_chunks=len(chunks))
         self.sqlite.add_chunks(chunks, start_chunk_id=start_chunk_id)
         self.faiss.save()
+        return True
 
     def search(self, query: str, top_k: Optional[int] = None) -> List[Dict[str, Any]]:
         query_cfg = self.config.get("query", {})

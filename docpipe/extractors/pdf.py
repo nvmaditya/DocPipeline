@@ -8,8 +8,10 @@ from .base import BaseExtractor
 
 
 class PdfExtractor(BaseExtractor):
-    def __init__(self, scanned_threshold: int = 50) -> None:
+    def __init__(self, scanned_threshold: int = 50, ocr_engine: str = "none", ocr_language: str = "eng") -> None:
         self.scanned_threshold = scanned_threshold
+        self.ocr_engine = ocr_engine.lower()
+        self.ocr_language = ocr_language
 
     def extract(self, file_path: str) -> List[Dict[str, Any]]:
         records: List[Dict[str, Any]] = []
@@ -19,7 +21,10 @@ class PdfExtractor(BaseExtractor):
                 text = page.get_text("text") or ""
                 is_scanned = len(text.strip()) < self.scanned_threshold
                 if is_scanned:
-                    continue
+                    ocr_text = self._extract_ocr_text(page)
+                    if not ocr_text.strip():
+                        continue
+                    text = ocr_text
                 records.append(
                     {
                         "text": text,
@@ -30,3 +35,42 @@ class PdfExtractor(BaseExtractor):
         finally:
             doc.close()
         return records
+
+    def _extract_ocr_text(self, page: fitz.Page) -> str:
+        if self.ocr_engine in {"none", "off", "disabled"}:
+            return ""
+
+        if self.ocr_engine == "surya":
+            try:
+                from surya.ocr import run_ocr  # type: ignore
+            except Exception:
+                return ""
+            try:
+                pix = page.get_pixmap(dpi=200)
+                png_bytes = pix.tobytes("png")
+                result = run_ocr([png_bytes], [self.ocr_language])
+                lines: List[str] = []
+                for page_result in result:
+                    for line in getattr(page_result, "text_lines", []) or []:
+                        value = getattr(line, "text", "")
+                        if value:
+                            lines.append(value)
+                return "\n".join(lines)
+            except Exception:
+                return ""
+
+        if self.ocr_engine == "tesseract":
+            try:
+                from PIL import Image
+                import io
+                import pytesseract
+            except Exception:
+                return ""
+            try:
+                pix = page.get_pixmap(dpi=300)
+                image = Image.open(io.BytesIO(pix.tobytes("png")))
+                return pytesseract.image_to_string(image, lang=self.ocr_language)
+            except Exception:
+                return ""
+
+        return ""
