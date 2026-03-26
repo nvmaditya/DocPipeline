@@ -170,3 +170,45 @@ Plan validated. Execution will proceed in ordered steps with verification before
 - Remote: `https://github.com/nvmaditya/DocPipeline.git`
 - Branch: `main`
 - Status: pushed successfully
+
+---
+
+# Phase 4 Implementation + Testing + Commits Todo
+
+## Plan (Checkable)
+
+- [x] Implement Phase 4 RAG layer (local LLM answer generation with retrieved chunk grounding)
+- [x] Run integration and feature tests for Phase 4 changes
+- [x] Create one GitHub commit per todo and push
+
+## Plan Check-In
+
+Plan verified and approved. Implementation will proceed in sequence with verification before finalization.
+
+## Progress Notes
+
+- Implemented RAG prompt and source helpers plus pipeline `ask()` flow.
+- Added CLI `--rag` mode and Phase 4 query config options.
+- Added integration and feature tests for RAG helpers and `ask()` with mocked LLM client.
+- Executed test suite and captured verification output.
+- Created todo-mapped commits and pushed to GitHub.
+
+## Review
+
+### Verification Evidence
+
+- Command: `python -m pytest tests/test_extractors.py tests/test_chunkers.py tests/test_pipeline.py -q`
+- Result: `12 passed, 1 warning in 29.30s`
+- Warning: `RequestsDependencyWarning` from dependency stack, non-blocking.
+
+### Todo Commit Mapping
+
+- Phase 4 implementation todo: `f6da72f` feat: implement phase4 rag answer generation with ollama backend
+- Testing todo: `40c4b8c` test: add phase4 rag integration and helper coverage
+- Push/workflow todo: included in follow-up commit with tracking updates
+
+### Push Status
+
+- Remote: `https://github.com/nvmaditya/DocPipeline.git`
+- Branch: `main`
+- Status: pushed successfully
