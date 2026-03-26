@@ -1,4 +1,4 @@
-# Document Pipeline (Phase 1)
+# Document Pipeline
 
 Local-first document ingestion and semantic search for PDF, DOCX, PPTX, XLSX/CSV, HTML, and text files.
 
@@ -13,6 +13,14 @@ pip install -r requirements.txt
 ## Configure
 
 Edit `config.yaml` for model and store paths.
+
+To avoid Hugging Face unauthenticated warnings and rate limits, set `HF_TOKEN` in `.env`.
+
+Phase 3 options:
+- `chunking.strategy`: `recursive` or `semantic`
+- `chunking.semantic_threshold`: split sensitivity for semantic chunking
+- `faiss.index_type`: `flat` or `hnsw`
+- `embedding.model`: defaults to `BAAI/bge-large-en-v1.5`
 
 ## CLI
 
@@ -38,5 +46,11 @@ pipe.close()
 ## Current Limits
 
 - OCR for scanned PDFs is optional and best-effort (`ocr_engine` can be `none`, `surya`, or `tesseract`)
-- Uses FlatIP FAISS index
 - RAG generation is not implemented yet
+
+## Retrieval Modes
+
+- Flat index: exact cosine search, best for smaller corpora
+- HNSW index: approximate nearest-neighbor search for larger corpora
+- Recursive chunking: faster, deterministic split
+- Semantic chunking: sentence-similarity-driven split for better topical coherence

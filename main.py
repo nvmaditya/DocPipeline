@@ -3,8 +3,12 @@ from __future__ import annotations
 import json
 
 import click
+from dotenv import load_dotenv
 
 from docpipe import Pipeline
+
+
+load_dotenv()
 
 
 @click.group()

@@ -125,3 +125,48 @@ Plan for this user request is verified and execution started in strict sequence.
 - Remote: `https://github.com/nvmaditya/DocPipeline.git`
 - Branch: `main`
 - Push status: successful (`main -> main`)
+
+---
+
+# Phase 3 Implementation + Testing + Commits Todo
+
+## Plan (Checkable)
+
+- [x] Implement Phase 3 features (semantic chunking, HNSW option, stronger model defaults, heading context improvements)
+- [x] Add feature and integration tests for Phase 3 paths
+- [x] Run verification tests and capture evidence
+- [x] Create one commit per todo item and push to GitHub
+- [x] Update review section with outcomes and proof
+
+## Plan Check-In
+
+Plan validated. Execution will proceed in ordered steps with verification before completion.
+
+## Progress Notes
+
+- Implemented semantic chunking and strategy selection in pipeline.
+- Added HNSW index option and tuning parameters in FAISS store and config.
+- Added PDF heading-context detection heuristic.
+- Added feature and integration tests for semantic chunking, HNSW, and heading context.
+- Ran Phase 3 test suite and captured pass result.
+- Created todo-based commits and pushed to GitHub.
+
+## Review
+
+### Verification Evidence
+
+- Command: `python -m pytest tests/test_extractors.py tests/test_chunkers.py tests/test_pipeline.py -q`
+- Result: `10 passed, 1 warning in 26.65s`
+- Warning: `RequestsDependencyWarning` from external dependency stack, non-blocking.
+
+### Todo Commit Mapping
+
+- Phase 3 implementation: `1da4e20` feat: implement phase3 semantic chunking and hnsw retrieval
+- Testing todo: `18e9122` test: add phase3 feature and integration coverage
+- Workflow/docs/push todo: included in follow-up commit with review updates
+
+### Push Status
+
+- Remote: `https://github.com/nvmaditya/DocPipeline.git`
+- Branch: `main`
+- Status: pushed successfully

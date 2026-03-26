@@ -9,6 +9,7 @@ faiss-cpu>=1.8.0
 numpy>=1.26.0
 pyyaml>=6.0.1
 click>=8.1.0
+python-dotenv>=1.0.1
 ftfy>=6.2.0
 pillow>=10.0.0
 pytesseract>=0.3.10
