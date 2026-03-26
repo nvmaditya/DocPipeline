@@ -1,5 +1,7 @@
 extraction:
     scanned_threshold: 50
+    ocr_engine: none
+    ocr_language: eng
 
 chunking:
     chunk_size: 512

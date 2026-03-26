@@ -1,6 +1,6 @@
 # Document Pipeline (Phase 1)
 
-Local-first document ingestion and semantic search for text-based PDFs and DOCX files.
+Local-first document ingestion and semantic search for PDF, DOCX, PPTX, XLSX/CSV, HTML, and text files.
 
 ## Install
 
@@ -35,8 +35,8 @@ print(results)
 pipe.close()
 ```
 
-## Phase 1 Limits
+## Current Limits
 
-- Supports only text-based PDF and DOCX extraction
-- OCR/scanned PDF support is deferred to Phase 2
-- Uses FlatIP FAISS index in Phase 1
+- OCR for scanned PDFs is optional and best-effort (`ocr_engine` can be `none`, `surya`, or `tesseract`)
+- Uses FlatIP FAISS index
+- RAG generation is not implemented yet
