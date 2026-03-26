@@ -27,6 +27,23 @@ def test_pdf_extractor_reads_text_page(tmp_path: Path) -> None:
     assert records[0]["page_number"] == 1
 
 
+def test_pdf_extractor_detects_heading_context(tmp_path: Path) -> None:
+    pdf_path = tmp_path / "heading.pdf"
+    doc = fitz.open()
+    page = doc.new_page()
+    page.insert_text((72, 72), "Executive Summary", fontsize=22)
+    page.insert_text((72, 120), "Body paragraph text here.", fontsize=11)
+    doc.save(str(pdf_path))
+    doc.close()
+
+    extractor = PdfExtractor(scanned_threshold=5)
+    records = extractor.extract(str(pdf_path))
+
+    assert records
+    assert records[0]["heading_context"] is not None
+    assert "Executive Summary" in records[0]["heading_context"]
+
+
 def test_docx_extractor_reads_heading_paragraph_and_table(tmp_path: Path) -> None:
     docx_path = tmp_path / "sample.docx"
     doc = Document()

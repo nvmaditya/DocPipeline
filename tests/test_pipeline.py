@@ -76,15 +76,20 @@ def test_pipeline_ingest_and_query(tmp_path: Path) -> None:
                 "  ocr_engine: none",
                 "  ocr_language: eng",
                 "chunking:",
+                "  strategy: semantic",
                 "  chunk_size: 256",
                 "  chunk_overlap: 32",
+                "  semantic_threshold: 0.5",
                 "embedding:",
                 "  model: sentence-transformers/all-MiniLM-L6-v2",
                 "  batch_size: 8",
                 "  device: cpu",
                 "  normalize: true",
                 "faiss:",
-                "  index_type: flat",
+                "  index_type: hnsw",
+                "  hnsw_m: 16",
+                "  hnsw_ef_construction: 80",
+                "  hnsw_ef_search: 32",
                 "store:",
                 f"  faiss_path: {faiss_path}",
                 f"  sqlite_path: {sqlite_path}",
@@ -119,14 +124,18 @@ def test_pipeline_ingest_and_query(tmp_path: Path) -> None:
     try:
         ingested = pipe.ingest(str(docs_dir))
         assert ingested >= 2
+    finally:
+        pipe.close()
 
-        results = pipe.search("revenue", top_k=5)
+    pipe2 = pipeline_mod.Pipeline(config=str(cfg_path))
+    try:
+        results = pipe2.search("revenue", top_k=5)
         assert results
         assert any("Revenue" in r["chunk_text"] or "revenue" in r["chunk_text"] for r in results)
 
-        stats = pipe.stats()
+        stats = pipe2.stats()
         assert stats["documents"] == ingested
         assert stats["chunks"] >= 2
     finally:
-        pipe.close()
+        pipe2.close()
         monkeypatch.undo()
