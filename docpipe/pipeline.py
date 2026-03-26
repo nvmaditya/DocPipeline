@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional
 
 import yaml
 
-from .chunkers import RecursiveChunker
+from .chunkers import RecursiveChunker, SemanticChunker
 from .cleaner import clean_text
 from .embedder import Embedder
 from .extractors import ExtractorRouter
@@ -23,6 +23,7 @@ class Pipeline:
         extraction_cfg = cfg.get("extraction", {})
         chunk_cfg = cfg.get("chunking", {})
         embedding_cfg = cfg.get("embedding", {})
+        faiss_cfg = cfg.get("faiss", {})
         store_cfg = cfg.get("store", {})
 
         self.router = ExtractorRouter(
@@ -30,18 +31,37 @@ class Pipeline:
             ocr_engine=str(extraction_cfg.get("ocr_engine", "none")),
             ocr_language=str(extraction_cfg.get("ocr_language", "eng")),
         )
-        self.chunker = RecursiveChunker(
-            chunk_size=int(chunk_cfg.get("chunk_size", 512)),
-            chunk_overlap=int(chunk_cfg.get("chunk_overlap", 64)),
-        )
         self.embedder = Embedder(
-            model_name=str(embedding_cfg.get("model", "sentence-transformers/all-MiniLM-L6-v2")),
+            model_name=str(embedding_cfg.get("model", "BAAI/bge-large-en-v1.5")),
             batch_size=int(embedding_cfg.get("batch_size", 32)),
             device=str(embedding_cfg.get("device", "cpu")),
             normalize=bool(embedding_cfg.get("normalize", True)),
         )
+
+        chunk_size = int(chunk_cfg.get("chunk_size", 512))
+        chunk_overlap = int(chunk_cfg.get("chunk_overlap", 64))
+        strategy = str(chunk_cfg.get("strategy", "recursive")).lower()
+        if strategy == "semantic":
+            self.chunker = SemanticChunker(
+                embedding_fn=self.embedder.encode,
+                chunk_size=chunk_size,
+                chunk_overlap=chunk_overlap,
+                similarity_threshold=float(chunk_cfg.get("semantic_threshold", 0.5)),
+            )
+        else:
+            self.chunker = RecursiveChunker(
+                chunk_size=chunk_size,
+                chunk_overlap=chunk_overlap,
+            )
+
         self.sqlite = SQLiteStore(str(store_cfg.get("sqlite_path", "store/metadata.db")))
-        self.faiss = FaissStore(str(store_cfg.get("faiss_path", "store/faiss.index")))
+        self.faiss = FaissStore(
+            str(store_cfg.get("faiss_path", "store/faiss.index")),
+            index_type=str(faiss_cfg.get("index_type", "flat")),
+            hnsw_m=int(faiss_cfg.get("hnsw_m", 32)),
+            hnsw_ef_construction=int(faiss_cfg.get("hnsw_ef_construction", 200)),
+            hnsw_ef_search=int(faiss_cfg.get("hnsw_ef_search", 64)),
+        )
 
     def _load_config(self, config_path: str) -> Dict[str, Any]:
         with open(config_path, "r", encoding="utf-8") as handle:

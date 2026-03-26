@@ -8,8 +8,19 @@ import numpy as np
 
 
 class FaissStore:
-    def __init__(self, index_path: str) -> None:
+    def __init__(
+        self,
+        index_path: str,
+        index_type: str = "flat",
+        hnsw_m: int = 32,
+        hnsw_ef_construction: int = 200,
+        hnsw_ef_search: int = 64,
+    ) -> None:
         self.index_path = index_path
+        self.index_type = index_type.lower()
+        self.hnsw_m = hnsw_m
+        self.hnsw_ef_construction = hnsw_ef_construction
+        self.hnsw_ef_search = hnsw_ef_search
         self.index = None
 
     def _ensure_index(self, dim: int) -> None:
@@ -17,7 +28,13 @@ class FaissStore:
             if Path(self.index_path).exists():
                 self.index = faiss.read_index(self.index_path)
             else:
-                self.index = faiss.IndexFlatIP(dim)
+                if self.index_type == "hnsw":
+                    index = faiss.IndexHNSWFlat(dim, self.hnsw_m)
+                    index.hnsw.efConstruction = self.hnsw_ef_construction
+                    index.hnsw.efSearch = self.hnsw_ef_search
+                    self.index = index
+                else:
+                    self.index = faiss.IndexFlatIP(dim)
 
     def add_vectors(self, vectors) -> None:
         np_vectors = np.asarray(vectors, dtype=np.float32)
@@ -30,6 +47,8 @@ class FaissStore:
         np_query = np.asarray(query_vector, dtype=np.float32)
         if np_query.ndim == 1:
             np_query = np_query.reshape(1, -1)
+        if self.index is None and Path(self.index_path).exists():
+            self.index = faiss.read_index(self.index_path)
         if self.index is None:
             return []
         scores, ids = self.index.search(np_query, top_k)

@@ -4,17 +4,22 @@ extraction:
     ocr_language: eng
 
 chunking:
+    strategy: recursive
     chunk_size: 512
     chunk_overlap: 64
+    semantic_threshold: 0.5
 
 embedding:
-    model: sentence-transformers/all-MiniLM-L6-v2
+    model: BAAI/bge-large-en-v1.5
     batch_size: 32
     device: cpu
     normalize: true
 
 faiss:
     index_type: flat
+    hnsw_m: 32
+    hnsw_ef_construction: 200
+    hnsw_ef_search: 64
 
 store:
     faiss_path: store/faiss.index

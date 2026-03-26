@@ -19,6 +19,7 @@ class PdfExtractor(BaseExtractor):
         try:
             for page_index, page in enumerate(doc):
                 text = page.get_text("text") or ""
+                heading_context = self._detect_heading_context(page)
                 is_scanned = len(text.strip()) < self.scanned_threshold
                 if is_scanned:
                     ocr_text = self._extract_ocr_text(page)
@@ -29,12 +30,39 @@ class PdfExtractor(BaseExtractor):
                     {
                         "text": text,
                         "page_number": page_index + 1,
-                        "heading_context": None,
+                        "heading_context": heading_context,
                     }
                 )
         finally:
             doc.close()
         return records
+
+    def _detect_heading_context(self, page: fitz.Page) -> str | None:
+        try:
+            content = page.get_text("dict")
+        except Exception:
+            return None
+
+        candidate = None
+        best_size = 0.0
+        for block in content.get("blocks", []):
+            for line in block.get("lines", []):
+                line_text_parts: List[str] = []
+                line_size = 0.0
+                for span in line.get("spans", []):
+                    text = (span.get("text") or "").strip()
+                    if text:
+                        line_text_parts.append(text)
+                        line_size = max(line_size, float(span.get("size") or 0.0))
+                line_text = " ".join(line_text_parts).strip()
+                if not line_text:
+                    continue
+                if len(line_text) > 120:
+                    continue
+                if line_size > best_size:
+                    candidate = line_text
+                    best_size = line_size
+        return candidate
 
     def _extract_ocr_text(self, page: fitz.Page) -> str:
         if self.ocr_engine in {"none", "off", "disabled"}:
