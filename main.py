@@ -36,12 +36,17 @@ def ingest(file_path: str | None, dir_path: str | None, config_path: str) -> Non
 @cli.command()
 @click.argument("query_text", type=str)
 @click.option("--top-k", default=None, type=int)
+@click.option("--rag", is_flag=True, help="Generate grounded answer using local LLM backend")
 @click.option("--config", "config_path", default="config.yaml", show_default=True)
-def query(query_text: str, top_k: int | None, config_path: str) -> None:
+def query(query_text: str, top_k: int | None, rag: bool, config_path: str) -> None:
     pipe = Pipeline(config=config_path)
     try:
-        results = pipe.search(query_text, top_k=top_k)
-        click.echo(json.dumps(results, indent=2, ensure_ascii=False))
+        if rag:
+            answer = pipe.ask(query_text, top_k=top_k)
+            click.echo(json.dumps(answer, indent=2, ensure_ascii=False))
+        else:
+            results = pipe.search(query_text, top_k=top_k)
+            click.echo(json.dumps(results, indent=2, ensure_ascii=False))
     finally:
         pipe.close()
 

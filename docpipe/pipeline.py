@@ -11,7 +11,7 @@ from .chunkers import RecursiveChunker, SemanticChunker
 from .cleaner import clean_text
 from .embedder import Embedder
 from .extractors import ExtractorRouter
-from .query import join_ranked_results
+from .query import build_rag_prompt, collect_sources, join_ranked_results
 from .store import FaissStore, SQLiteStore
 
 
@@ -129,6 +129,47 @@ class Pipeline:
         ids = [chunk_id for chunk_id, _ in hits]
         rows = self.sqlite.get_chunks_by_ids(ids)
         return join_ranked_results(hits, rows, score_threshold=threshold)
+
+    def ask(
+        self,
+        question: str,
+        top_k: Optional[int] = None,
+        llm_backend: Optional[str] = None,
+        llm_model: Optional[str] = None,
+        llm_client: Any = None,
+    ) -> Dict[str, Any]:
+        query_cfg = self.config.get("query", {})
+        backend = str(llm_backend or query_cfg.get("llm_backend", "ollama")).lower()
+        model = str(llm_model or query_cfg.get("llm_model", "llama3.2"))
+
+        ranked = self.search(question, top_k=top_k)
+        if not ranked:
+            return {"response": "I do not have enough information in the indexed documents.", "sources": []}
+
+        prompt = build_rag_prompt(question, ranked)
+        sources = collect_sources(ranked)
+
+        if backend != "ollama":
+            raise ValueError(f"Unsupported llm_backend: {backend}")
+
+        if llm_client is None:
+            try:
+                import ollama
+            except Exception as exc:
+                raise RuntimeError("Ollama client not installed. Install `ollama` package to use --rag.") from exc
+
+            result = ollama.chat(
+                model=model,
+                messages=[
+                    {"role": "system", "content": "Answer with citations and stay grounded in provided context."},
+                    {"role": "user", "content": prompt},
+                ],
+            )
+            response = result.get("message", {}).get("content", "")
+        else:
+            response = llm_client(prompt, model)
+
+        return {"response": response, "sources": sources}
 
     def stats(self) -> Dict[str, int]:
         return self.sqlite.stats()

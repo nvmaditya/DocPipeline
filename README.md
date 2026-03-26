@@ -17,6 +17,7 @@ Edit `config.yaml` for model and store paths.
 To avoid Hugging Face unauthenticated warnings and rate limits, set `HF_TOKEN` in `.env`.
 
 Phase 3 options:
+
 - `chunking.strategy`: `recursive` or `semantic`
 - `chunking.semantic_threshold`: split sensitivity for semantic chunking
 - `faiss.index_type`: `flat` or `hnsw`
@@ -28,6 +29,7 @@ Phase 3 options:
 python main.py ingest --file path/to/file.pdf
 python main.py ingest --dir path/to/docs
 python main.py query "quarterly revenue"
+python main.py query "quarterly revenue" --rag
 python main.py stats
 ```
 
@@ -46,7 +48,7 @@ pipe.close()
 ## Current Limits
 
 - OCR for scanned PDFs is optional and best-effort (`ocr_engine` can be `none`, `surya`, or `tesseract`)
-- RAG generation is not implemented yet
+- RAG requires local Ollama runtime when `--rag` is used
 
 ## Retrieval Modes
 
@@ -54,3 +56,10 @@ pipe.close()
 - HNSW index: approximate nearest-neighbor search for larger corpora
 - Recursive chunking: faster, deterministic split
 - Semantic chunking: sentence-similarity-driven split for better topical coherence
+
+## RAG Mode (Phase 4)
+
+- Command: `python main.py query "your question" --rag`
+- Backend: configured by `query.llm_backend` (current implementation: `ollama`)
+- Model: configured by `query.llm_model` (default `llama3.2`)
+- Output: grounded answer + source list from retrieved chunks

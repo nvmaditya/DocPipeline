@@ -28,3 +28,6 @@ store:
 query:
     top_k: 5
     score_threshold: 0.0
+    use_llm: false
+    llm_backend: ollama
+    llm_model: llama3.2
