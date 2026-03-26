@@ -1,0 +1,23 @@
+extraction:
+    scanned_threshold: 50
+
+chunking:
+    chunk_size: 512
+    chunk_overlap: 64
+
+embedding:
+    model: sentence-transformers/all-MiniLM-L6-v2
+    batch_size: 32
+    device: cpu
+    normalize: true
+
+faiss:
+    index_type: flat
+
+store:
+    faiss_path: store/faiss.index
+    sqlite_path: store/metadata.db
+
+query:
+    top_k: 5
+    score_threshold: 0.0
