@@ -173,6 +173,47 @@ Plan validated. Execution will proceed in ordered steps with verification before
 
 ---
 
+# Phase 6 Follow-up: Retest + README + Start Script Todo
+
+## Plan (Checkable)
+
+- [x] Run backend and frontend integration/feature verification commands and capture evidence
+- [ ] Update `README.md` for current full-stack usage if required
+- [ ] Create a single file to start both backend and frontend
+- [ ] Create one git commit per completed todo item and push to GitHub
+
+## Plan Check-In
+
+Plan verified. Execution starts with integration/feature re-testing, then docs/script updates, then per-todo commits and push.
+
+## Progress Notes
+
+- Started execution and locked commit scope to this new section and request-specific artifacts.
+- Re-ran backend integration/features tests and backend package coverage gates successfully.
+- Re-ran frontend integration/features tests, frontend coverage run, and production build successfully.
+
+## Review
+
+### Verification Evidence
+
+- `python -m pytest backend/tests -q` -> pass (14 passed)
+- `python -m pytest backend/tests --cov=backend.app.api --cov-fail-under=80 --cov-report=term` -> pass (91.76%)
+- `python -m pytest backend/tests --cov=backend.app.services --cov-fail-under=80 --cov-report=term` -> pass (93.27%)
+- `python -m pytest backend/tests --cov=backend.app.adapters --cov-fail-under=80 --cov-report=term` -> pass (92.66%)
+- `cd frontend && npm run test` -> pass (6 files, 10 tests)
+- `cd frontend && npm run test:cov` -> pass (all files lines 85.01%, statements 85.01%)
+- `cd frontend && npm run build` -> pass (Next.js 16.2.1 build success)
+
+### Todo Commit Mapping
+
+- Pending implementation.
+
+### Push Status
+
+- Pending implementation.
+
+---
+
 # Phase 6 Frontend Scaffold + Integration Verification Todo
 
 ## Plan (Checkable)
