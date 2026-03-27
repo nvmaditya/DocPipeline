@@ -178,7 +178,7 @@ Plan validated. Execution will proceed in ordered steps with verification before
 ## Plan (Checkable)
 
 - [x] Run backend and frontend integration/feature verification commands and capture evidence
-- [ ] Update `README.md` for current full-stack usage if required
+- [x] Update `README.md` for current full-stack usage if required
 - [ ] Create a single file to start both backend and frontend
 - [ ] Create one git commit per completed todo item and push to GitHub
 
@@ -191,6 +191,7 @@ Plan verified. Execution starts with integration/feature re-testing, then docs/s
 - Started execution and locked commit scope to this new section and request-specific artifacts.
 - Re-ran backend integration/features tests and backend package coverage gates successfully.
 - Re-ran frontend integration/features tests, frontend coverage run, and production build successfully.
+- Updated `README.md` to document full-stack quick start, API surface, and test commands before commit finalization.
 
 ## Review
 
