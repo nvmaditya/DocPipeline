@@ -179,7 +179,7 @@ Plan validated. Execution will proceed in ordered steps with verification before
 
 - [x] Update workflow artifacts first (`tasks/todo.md`, `tasks/lessons.md`) and lock isolated commit scope
 - [x] Run integration and feature verification tests and capture evidence
-- [ ] Replace Ollama-based LLM path with GitHub Models API path (OpenAI SDK + `GITHUB_TOKEN`)
+- [x] Replace Ollama-based LLM path with GitHub Models API path (OpenAI SDK + `GITHUB_TOKEN`)
 - [ ] Validate embedding on user-provided PDF path and persist run evidence
 - [ ] Try multiple GitHub embedding models and record comparative results
 - [ ] Create one commit per todo item above and push to GitHub
@@ -194,6 +194,7 @@ Plan created per `guidelines.md` and approved by explicit user request to start 
 - Isolated commit scope confirmed due pre-existing unrelated worktree changes.
 - Ran integration/feature verification across backend, pipeline, and frontend suites.
 - Corrected one verification hiccup caused by terminal CWD drift and re-ran failed commands from repository root.
+- Migrated LLM/embedding integration to GitHub Models support with OpenAI SDK and GitHub-token-based runtime configuration.
 
 ## Review
 

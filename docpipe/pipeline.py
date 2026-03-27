@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -36,6 +37,9 @@ class Pipeline:
             batch_size=int(embedding_cfg.get("batch_size", 32)),
             device=str(embedding_cfg.get("device", "cpu")),
             normalize=bool(embedding_cfg.get("normalize", True)),
+            backend=str(embedding_cfg.get("backend", "local")),
+            github_endpoint=str(embedding_cfg.get("github_endpoint", "https://models.github.ai/inference")),
+            github_token_env=str(embedding_cfg.get("github_token_env", "GITHUB_TOKEN")),
         )
 
         chunk_size = int(chunk_cfg.get("chunk_size", 512))
@@ -139,8 +143,10 @@ class Pipeline:
         llm_client: Any = None,
     ) -> Dict[str, Any]:
         query_cfg = self.config.get("query", {})
-        backend = str(llm_backend or query_cfg.get("llm_backend", "ollama")).lower()
-        model = str(llm_model or query_cfg.get("llm_model", "llama3.2"))
+        backend = str(llm_backend or query_cfg.get("llm_backend", "github")).lower()
+        model = str(llm_model or query_cfg.get("llm_model", "openai/gpt-5"))
+        github_endpoint = str(query_cfg.get("github_endpoint", "https://models.github.ai/inference"))
+        github_token_env = str(query_cfg.get("github_token_env", "GITHUB_TOKEN"))
 
         ranked = self.search(question, top_k=top_k)
         if not ranked:
@@ -149,10 +155,15 @@ class Pipeline:
         prompt = build_rag_prompt(question, ranked)
         sources = collect_sources(ranked)
 
-        if backend != "ollama":
-            raise ValueError(f"Unsupported llm_backend: {backend}")
+        if llm_client is not None:
+            response = llm_client(prompt, model)
+            return {"response": response, "sources": sources}
 
-        if llm_client is None:
+        if backend == "github":
+            response = self._ask_with_github_models(prompt=prompt, model=model, endpoint=github_endpoint, token_env=github_token_env)
+            return {"response": response, "sources": sources}
+
+        if backend == "ollama":
             try:
                 import ollama
             except Exception as exc:
@@ -166,10 +177,28 @@ class Pipeline:
                 ],
             )
             response = result.get("message", {}).get("content", "")
-        else:
-            response = llm_client(prompt, model)
 
         return {"response": response, "sources": sources}
+
+    def _ask_with_github_models(self, prompt: str, model: str, endpoint: str, token_env: str) -> str:
+        token = os.getenv(token_env)
+        if not token:
+            raise RuntimeError(f"Missing {token_env}. Set it to call GitHub Models chat API.")
+
+        try:
+            from openai import OpenAI
+        except Exception as exc:
+            raise RuntimeError("OpenAI SDK is required for GitHub chat API. Install `openai`.") from exc
+
+        client = OpenAI(base_url=endpoint, api_key=token)
+        response = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": "You are a retrieval assistant. Stay grounded in provided context and cite sources."},
+                {"role": "user", "content": prompt},
+            ],
+        )
+        return response.choices[0].message.content or ""
 
     def stats(self) -> Dict[str, int]:
         return self.sqlite.stats()

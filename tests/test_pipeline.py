@@ -192,8 +192,8 @@ def test_pipeline_ask_with_mock_llm(tmp_path: Path) -> None:
                 "query:",
                 "  top_k: 3",
                 "  score_threshold: 0.0",
-                "  llm_backend: ollama",
-                "  llm_model: llama3.2",
+                "  llm_backend: github",
+                "  llm_model: openai/gpt-5",
             ]
         ),
         encoding="utf-8",

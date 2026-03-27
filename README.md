@@ -39,9 +39,10 @@ This launches backend and frontend in two separate terminals.
 ### Backend server
 
 ```bash
-cd backend
-../.venv/Scripts/python.exe -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+uvicorn backend.app.main:app --reload
 ```
+
+Run this from the repository root after activating `.venv`.
 
 Backend URLs:
 
@@ -59,6 +60,8 @@ npm run dev
 Frontend URL:
 
 - App: `http://localhost:3000`
+
+Upload endpoints require authentication. Register and login first so the frontend can send a Bearer token for document APIs.
 
 ## Configure
 
@@ -140,7 +143,7 @@ pipe.close()
 ## Current Limits
 
 - OCR for scanned PDFs is optional and best-effort (`ocr_engine` can be `none`, `surya`, or `tesseract`)
-- RAG requires local Ollama runtime when `--rag` is used
+- RAG requires `GITHUB_TOKEN` to call GitHub Models API when `--rag` is used
 
 ## Retrieval Modes
 
@@ -152,6 +155,7 @@ pipe.close()
 ## RAG Mode (Phase 4)
 
 - Command: `python main.py query "your question" --rag`
-- Backend: configured by `query.llm_backend` (current implementation: `ollama`)
-- Model: configured by `query.llm_model` (default `llama3.2`)
+- Backend: configured by `query.llm_backend` (default: `github`)
+- Model: configured by `query.llm_model` (default: `openai/gpt-5`)
+- Auth: set `GITHUB_TOKEN` in your environment
 - Output: grounded answer + source list from retrieved chunks

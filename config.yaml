@@ -10,10 +10,13 @@ chunking:
     semantic_threshold: 0.5
 
 embedding:
+    backend: local
     model: BAAI/bge-large-en-v1.5
     batch_size: 32
     device: cpu
     normalize: true
+    github_endpoint: https://models.github.ai/inference
+    github_token_env: GITHUB_TOKEN
 
 faiss:
     index_type: flat
@@ -29,5 +32,7 @@ query:
     top_k: 5
     score_threshold: 0.0
     use_llm: false
-    llm_backend: ollama
-    llm_model: llama3.2
+    llm_backend: github
+    llm_model: openai/gpt-5
+    github_endpoint: https://models.github.ai/inference
+    github_token_env: GITHUB_TOKEN
