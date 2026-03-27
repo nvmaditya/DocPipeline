@@ -179,7 +179,7 @@ Plan validated. Execution will proceed in ordered steps with verification before
 
 - [x] Run backend and frontend integration/feature verification commands and capture evidence
 - [x] Update `README.md` for current full-stack usage if required
-- [ ] Create a single file to start both backend and frontend
+- [x] Create a single file to start both backend and frontend
 - [ ] Create one git commit per completed todo item and push to GitHub
 
 ## Plan Check-In
@@ -192,6 +192,7 @@ Plan verified. Execution starts with integration/feature re-testing, then docs/s
 - Re-ran backend integration/features tests and backend package coverage gates successfully.
 - Re-ran frontend integration/features tests, frontend coverage run, and production build successfully.
 - Updated `README.md` to document full-stack quick start, API surface, and test commands before commit finalization.
+- Added `start-dev.cmd` at repository root to launch backend and frontend in separate terminals.
 
 ## Review
 
@@ -204,6 +205,7 @@ Plan verified. Execution starts with integration/feature re-testing, then docs/s
 - `cd frontend && npm run test` -> pass (6 files, 10 tests)
 - `cd frontend && npm run test:cov` -> pass (all files lines 85.01%, statements 85.01%)
 - `cd frontend && npm run build` -> pass (Next.js 16.2.1 build success)
+- `start-dev.cmd` -> pass (backend/frontend terminals launched)
 
 ### Todo Commit Mapping
 
