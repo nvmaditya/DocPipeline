@@ -1,0 +1,103 @@
+:root {
+  color-scheme: light;
+  font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+  background: #f6f7fb;
+  color: #1b1d23;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(circle at top left, #eef6ff 0%, #f7f7fb 40%, #ffffff 100%);
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.shell {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #d7dce5;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 8px 20px rgba(25, 35, 60, 0.06);
+}
+
+.grid {
+  display: grid;
+  gap: 16px;
+}
+
+.grid.two {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+input,
+button,
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 8px;
+  border: 1px solid #b7bfd0;
+  font: inherit;
+}
+
+button {
+  background: #0f4dd8;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: transform 120ms ease, filter 120ms ease;
+}
+
+button:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+button.secondary {
+  background: #1d2330;
+}
+
+button.ghost {
+  background: #eef2ff;
+  color: #28345a;
+}
+
+.status {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #22325a;
+}
+
+ul {
+  margin: 8px 0 0;
+  padding: 0 0 0 18px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #e5ecff;
+  color: #203367;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
