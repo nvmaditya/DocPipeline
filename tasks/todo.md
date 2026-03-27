@@ -181,7 +181,7 @@ Plan validated. Execution will proceed in ordered steps with verification before
 - [x] Run integration and feature verification tests and capture evidence
 - [x] Redesign frontend UI/UX with professional spacing, hierarchy, and responsive behavior
 - [x] Re-run frontend and integration verification after UI updates
-- [ ] Create one commit per completed todo item and push to GitHub
+- [x] Create one commit per completed todo item and push to GitHub
 
 ## Plan Check-In
 
@@ -211,11 +211,17 @@ Plan verified and execution started in strict sequence per `guidelines.md`.
 
 ### Todo Commit Mapping
 
-- Pending.
+- Workflow artifacts todo: `b4da310` chore: initialize ux-overhaul todo and lessons
+- Integration/features baseline todo: `9c2ee03` test: capture integration and feature baseline results
+- Frontend UX redesign todo: `a3ae57f` feat: overhaul frontend ux and responsive layout
+- Post-change verification todo: `6cc7e28` test: record post-ui integration and feature verification
+- Commit mapping/push todo: pending current commit
 
 ### Push Status
 
-- Pending.
+- Remote: `https://github.com/nvmaditya/DocPipeline.git`
+- Branch: `main`
+- Status: pending current push
 
 ---
 
