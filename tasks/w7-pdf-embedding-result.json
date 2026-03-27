@@ -1,0 +1,11 @@
+{
+  "pdf_exists": true,
+  "records": 124,
+  "text_chars": 96920,
+  "sample_chars": 2000,
+  "embedding_shape": [
+    1,
+    384
+  ],
+  "status": "ok"
+}
