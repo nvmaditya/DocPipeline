@@ -173,6 +173,43 @@ Plan validated. Execution will proceed in ordered steps with verification before
 
 ---
 
+# Community Book Vector DB + Integration + Per-Todo Commits (Mar 27, 2026)
+
+## Plan (Checkable)
+
+- [x] Update workflow artifacts first (`tasks/todo.md`, `tasks/lessons.md`) and lock isolated commit scope
+- [ ] Run baseline integration and feature test suites and capture evidence
+- [ ] Build global shared community vector databases and indexes for each top-level book in `Books/`
+- [ ] Add backend community database selection support for both semantic search and ask-stream
+- [ ] Add backend feature/integration tests for community database flows and regressions
+- [ ] Add frontend community page and database selector wiring for search and chatbot flows
+- [ ] Add frontend tests plus full verification run, then create one commit and push per todo item
+
+## Plan Check-In
+
+Implementation started in strict sequence per `guidelines.md`.
+
+## Progress Notes
+
+- Confirmed dirty worktree handling with user and locked path-scoped isolated commits.
+- Updated `tasks/lessons.md` and initialized this section before feature work.
+
+## Review
+
+### Verification Evidence
+
+- Pending implementation and test execution.
+
+### Todo Commit Mapping
+
+- Pending.
+
+### Push Status
+
+- Pending.
+
+---
+
 # GitHub API Migration + Embedding Validation Todo (Mar 27, 2026)
 
 ## Plan (Checkable)

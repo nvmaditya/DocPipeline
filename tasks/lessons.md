@@ -6,3 +6,4 @@
 - When architecture direction changes, update `architecture.md`, `idea.md`, and all `tasks/*` roadmap artifacts in one synchronized pass to avoid stale contradictions.
 - If user asks to start implementation after a planning pass, immediately execute code changes and verification in the same turn instead of ending at plan handoff.
 - When the user asks to strictly follow `guidelines.md`, always begin by updating `tasks/todo.md` and `tasks/lessons.md`, then keep one isolated commit per explicit todo item.
+- In a dirty worktree, explicitly confirm isolated path-scoped commits before proceeding and avoid touching unrelated files.
