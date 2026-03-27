@@ -182,7 +182,7 @@ Plan validated. Execution will proceed in ordered steps with verification before
 - [x] Replace Ollama-based LLM path with GitHub Models API path (OpenAI SDK + `GITHUB_TOKEN`)
 - [x] Validate embedding on user-provided PDF path and persist run evidence
 - [x] Try multiple GitHub embedding models and record comparative results
-- [ ] Create one commit per todo item above and push to GitHub
+- [x] Create one commit per todo item above and push to GitHub
 
 ## Plan Check-In
 
@@ -210,6 +210,14 @@ Plan created per `guidelines.md` and approved by explicit user request to start 
     - `openai/text-embedding-3-small` -> blocked (`Missing GITHUB_TOKEN`)
     - `openai/text-embedding-3-large` -> blocked (`Missing GITHUB_TOKEN`)
     - `openai/text-embedding-ada-002` -> blocked (`Missing GITHUB_TOKEN`)
+
+### Todo Commit Mapping
+
+- Workflow artifacts todo: `6adb561` chore: initialize github-api migration todo and lessons
+- Integration/features testing todo: `978b0da` test: run integration and feature verification suites
+- GitHub API migration todo: `d4df107` feat: migrate rag and embedding clients to github models api
+- PDF embedding validation todo: `7f05309` test: validate embedding on provided pdf sample
+- GitHub embedding model trial todo: `fdd477f` test: trial github embedding models on pdf sample
 
 ---
 
