@@ -215,13 +215,13 @@ Plan verified and execution started in strict sequence per `guidelines.md`.
 - Integration/features baseline todo: `9c2ee03` test: capture integration and feature baseline results
 - Frontend UX redesign todo: `a3ae57f` feat: overhaul frontend ux and responsive layout
 - Post-change verification todo: `6cc7e28` test: record post-ui integration and feature verification
-- Commit mapping/push todo: pending current commit
+- Commit mapping/push todo: `25c04d7` chore: finalize ux-overhaul commit mapping and push tracking
 
 ### Push Status
 
 - Remote: `https://github.com/nvmaditya/DocPipeline.git`
 - Branch: `main`
-- Status: pending current push
+- Status: pushed successfully (`main -> main`)
 
 ---
 
