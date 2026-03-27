@@ -173,6 +173,78 @@ Plan validated. Execution will proceed in ordered steps with verification before
 
 ---
 
+# Phase 6 Frontend Scaffold + Integration Verification Todo
+
+## Plan (Checkable)
+
+- [x] Re-run backend integration and feature tests to lock live API contracts
+- [ ] Scaffold Phase 6 frontend workspace (Next.js + TypeScript) against current backend contracts
+- [ ] Implement frontend API client and baseline auth/docs/search/ask-stream pages
+- [ ] Add frontend feature/integration tests and run verification commands
+- [ ] Create one git commit per completed todo item and push to GitHub
+
+## Plan Check-In
+
+Plan verified. Implementation started with backend contract verification and coverage gate re-check.
+
+## Progress Notes
+
+- Re-ran backend integration/features suite and confirmed contract stability for auth, docs, semantic search, and SSE ask stream.
+- Re-ran backend package coverage gates with `--cov-fail-under=80` for API/services/adapters and confirmed all pass.
+
+## Review
+
+### Verification Evidence
+
+- `python -m pytest backend/tests -q` -> pass (integration/features suite)
+- `python -m pytest backend/tests --cov=backend.app.api --cov-fail-under=80 --cov-report=term` -> pass (91.76%)
+- `python -m pytest backend/tests --cov=backend.app.services --cov-fail-under=80 --cov-report=term` -> pass (93.27%)
+- `python -m pytest backend/tests --cov=backend.app.adapters --cov-fail-under=80 --cov-report=term` -> pass (92.66%)
+
+### Todo Commit Mapping
+
+- Pending implementation.
+
+### Push Status
+
+- Pending implementation.
+
+---
+
+# Phase 6 Frontend Scaffold + Integration Verification Todo
+
+## Plan (Checkable)
+
+- [ ] Re-run backend integration and feature tests to lock live API contracts
+- [ ] Scaffold Phase 6 frontend workspace (Next.js + TypeScript) against current backend contracts
+- [ ] Implement frontend API client and baseline auth/docs/search/ask-stream pages
+- [ ] Add frontend feature/integration tests and run verification commands
+- [ ] Create one git commit per completed todo item and push to GitHub
+
+## Plan Check-In
+
+Plan verified. Implementation starts with backend contract verification, then Phase 6 frontend scaffold and tests.
+
+## Progress Notes
+
+- Started implementation cycle and locked commit scope to only new Phase 6 artifacts.
+
+## Review
+
+### Verification Evidence
+
+- Pending implementation.
+
+### Todo Commit Mapping
+
+- Pending implementation.
+
+### Push Status
+
+- Pending implementation.
+
+---
+
 # Phase 4 Implementation + Testing + Commits Todo
 
 ## Plan (Checkable)
