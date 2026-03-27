@@ -180,7 +180,7 @@ Plan validated. Execution will proceed in ordered steps with verification before
 - [x] Re-run backend integration and feature tests to lock live API contracts
 - [x] Scaffold Phase 6 frontend workspace (Next.js + TypeScript) against current backend contracts
 - [x] Implement frontend API client and baseline auth/docs/search/ask-stream pages
-- [ ] Add frontend feature/integration tests and run verification commands
+- [x] Add frontend feature/integration tests and run verification commands
 - [ ] Create one git commit per completed todo item and push to GitHub
 
 ## Plan Check-In
@@ -193,6 +193,8 @@ Plan verified. Implementation started with backend contract verification and cov
 - Re-ran backend package coverage gates with `--cov-fail-under=80` for API/services/adapters and confirmed all pass.
 - Created frontend workspace scaffold under `frontend/` with Next.js + TypeScript config, env template, and test tooling bootstrap.
 - Implemented contract-aligned frontend API client plus auth/docs/search/ask-stream panels and route pages.
+- Added frontend feature/integration tests for API client, auth panel, document panel, search panel, and ask-stream SSE behavior.
+- Verified frontend scaffold with test, coverage, and production build commands.
 
 ## Review
 
@@ -202,44 +204,16 @@ Plan verified. Implementation started with backend contract verification and cov
 - `python -m pytest backend/tests --cov=backend.app.api --cov-fail-under=80 --cov-report=term` -> pass (91.76%)
 - `python -m pytest backend/tests --cov=backend.app.services --cov-fail-under=80 --cov-report=term` -> pass (93.27%)
 - `python -m pytest backend/tests --cov=backend.app.adapters --cov-fail-under=80 --cov-report=term` -> pass (92.66%)
+- `cd frontend && npm run test` -> pass (`6 files, 10 tests`)
+- `cd frontend && npm run test:cov` -> pass (`All files lines/statements 84.57%`, thresholds satisfied)
+- `cd frontend && npm run build` -> pass (Next.js static routes generated)
 
 ### Todo Commit Mapping
 
-- Pending implementation.
-
-### Push Status
-
-- Pending implementation.
-
----
-
-# Phase 6 Frontend Scaffold + Integration Verification Todo
-
-## Plan (Checkable)
-
-- [ ] Re-run backend integration and feature tests to lock live API contracts
-- [ ] Scaffold Phase 6 frontend workspace (Next.js + TypeScript) against current backend contracts
-- [ ] Implement frontend API client and baseline auth/docs/search/ask-stream pages
-- [ ] Add frontend feature/integration tests and run verification commands
-- [ ] Create one git commit per completed todo item and push to GitHub
-
-## Plan Check-In
-
-Plan verified. Implementation starts with backend contract verification, then Phase 6 frontend scaffold and tests.
-
-## Progress Notes
-
-- Started implementation cycle and locked commit scope to only new Phase 6 artifacts.
-
-## Review
-
-### Verification Evidence
-
-- Pending implementation.
-
-### Todo Commit Mapping
-
-- Pending implementation.
+- Backend verification todo: `0da4125` test: verify backend contracts and coverage gates for phase6 kickoff
+- Frontend scaffold todo: `baad2c9` feat: scaffold phase6 nextjs frontend workspace
+- Frontend API/pages todo: `421dd42` feat: add contract-aligned frontend api and pages
+- Frontend tests/verification todo: pending current commit
 
 ### Push Status
 
