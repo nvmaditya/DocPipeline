@@ -179,7 +179,7 @@ Plan validated. Execution will proceed in ordered steps with verification before
 
 - [x] Re-run backend integration and feature tests to lock live API contracts
 - [x] Scaffold Phase 6 frontend workspace (Next.js + TypeScript) against current backend contracts
-- [ ] Implement frontend API client and baseline auth/docs/search/ask-stream pages
+- [x] Implement frontend API client and baseline auth/docs/search/ask-stream pages
 - [ ] Add frontend feature/integration tests and run verification commands
 - [ ] Create one git commit per completed todo item and push to GitHub
 
@@ -192,6 +192,7 @@ Plan verified. Implementation started with backend contract verification and cov
 - Re-ran backend integration/features suite and confirmed contract stability for auth, docs, semantic search, and SSE ask stream.
 - Re-ran backend package coverage gates with `--cov-fail-under=80` for API/services/adapters and confirmed all pass.
 - Created frontend workspace scaffold under `frontend/` with Next.js + TypeScript config, env template, and test tooling bootstrap.
+- Implemented contract-aligned frontend API client plus auth/docs/search/ask-stream panels and route pages.
 
 ## Review
 
