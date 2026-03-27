@@ -212,3 +212,98 @@ Plan verified and approved. Implementation will proceed in sequence with verific
 - Remote: `https://github.com/nvmaditya/DocPipeline.git`
 - Branch: `main`
 - Status: pushed successfully
+
+---
+
+# Website Pivot Documentation Sync Todo
+
+## Plan (Checkable)
+
+- [x] Replace `architecture.md` with website-first target architecture and module gates
+- [x] Replace `idea.md` with web product direction and locked MVP assumptions
+- [x] Add future phase sections to task artifacts (`todo`, checklist, risks, board, lessons)
+- [x] Run cross-doc consistency pass for terminology and assumptions
+- [x] Preserve historical Phase 1-4 records while adding future roadmap
+
+## Plan Check-In
+
+Execution started after planning handoff. Scope is documentation-only sync for the website pivot.
+
+## Progress Notes
+
+- Updated architecture narrative from CLI-first to FastAPI + Next.js website direction.
+- Reframed idea document around productized study workflow delivery.
+- Added future roadmap sections to all task support files.
+
+## Review
+
+### Verification Evidence
+
+- Contradictory forward-looking statements about single-user CLI-only direction were removed from core vision docs.
+- Locked assumptions are now explicit across docs: single instance backend, SSE-first ask flow, hybrid frontend persistence, and package coverage gates.
+- Historical implementation evidence for Phase 1-4 is retained.
+
+---
+
+# Phase 5 Backend Foundation Todo
+
+## Plan (Checkable)
+
+- [x] Create `backend/app/main.py` FastAPI application entrypoint
+- [x] Add API routers: `auth`, `documents`, `search`
+- [x] Add services for auth, document orchestration, and semantic search
+- [x] Add adapter layer to reuse existing `docpipe` pipeline modules
+- [x] Add endpoint tests for `/api/v1/auth/*`, `/api/v1/docs/*`, `/api/v1/search/semantic`
+- [x] Add SSE endpoint test for `/api/v1/search/ask/stream`
+- [ ] Meet package-level test gate (>=80%) for backend packages
+
+## Plan Check-In
+
+Implementation started. Initial backend scaffold and smoke tests are in place.
+
+## Progress Notes
+
+- Created `backend/app/main.py`, dependency wiring, and API router modules.
+- Added in-memory service layer for auth, document metadata, search, and ask stream.
+- Added backend smoke tests in `backend/tests/test_api_smoke.py`.
+- Installed backend API dependencies in project venv.
+- Verified backend smoke tests and full suite pass after scaffold.
+- Added `PipelineAdapter` and rewired document/search services to use live `docpipe` ingest and search.
+- Extended SQLite store with document query and soft-delete support to keep deleted docs out of list/search responses.
+
+## Review
+
+### Verification Evidence
+
+- Backend API tests: `python -m pytest backend/tests/test_api_smoke.py -q` -> `5 passed`.
+- Full project tests: `python -m pytest -q` -> `17 passed`.
+- Adapter integration status: live `docpipe` ingest/search path is active behind backend services.
+- Remaining open item: package coverage gate report and enforcement (`>=80%` per package).
+
+---
+
+# W5-06 Coverage Rollout + Integration Testing Todo
+
+## Plan (Checkable)
+
+- [x] Add/expand backend integration and feature tests for auth, documents, search, and adapter behavior
+- [ ] Add pytest-cov configuration and generate baseline coverage report for backend packages
+- [ ] Enforce coverage gate (`>=80%`) per backend package and verify gating commands pass
+- [ ] Create one git commit per completed todo item and push to GitHub
+
+## Plan Check-In
+
+Plan created per `guidelines.md`. Implementation starts now with test expansion, then coverage baseline, then gate enforcement.
+
+## Progress Notes
+
+- Added `backend/tests/conftest.py` with shared runtime fixtures and dummy embedder.
+- Added feature/integration test modules for auth, documents, and search flows.
+- Verified backend integration test run passes.
+
+## Review
+
+### Verification Evidence
+
+- Command: `python -m pytest backend/tests -q`
+- Result: `14 passed, 3 warnings`

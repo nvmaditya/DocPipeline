@@ -10,7 +10,7 @@ class SQLiteStore:
     def __init__(self, db_path: str) -> None:
         self.db_path = db_path
         Path(db_path).parent.mkdir(parents=True, exist_ok=True)
-        self.conn = sqlite3.connect(db_path)
+        self.conn = sqlite3.connect(db_path, check_same_thread=False)
         self.conn.row_factory = sqlite3.Row
         self._init_schema()
 
@@ -29,6 +29,12 @@ class SQLiteStore:
             )
             """
         )
+        columns = {
+            row["name"]
+            for row in cursor.execute("PRAGMA table_info(documents)").fetchall()
+        }
+        if "deleted" not in columns:
+            cursor.execute("ALTER TABLE documents ADD COLUMN deleted INTEGER NOT NULL DEFAULT 0")
         cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS chunks (
@@ -51,8 +57,8 @@ class SQLiteStore:
         self.conn.execute(
             """
             INSERT OR REPLACE INTO documents
-            (doc_id, file_path, file_name, file_type, ingested_at, total_chunks, metadata)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            (doc_id, file_path, file_name, file_type, ingested_at, total_chunks, metadata, deleted)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 0)
             """,
             (
                 doc_meta["doc_id"],
@@ -104,11 +110,58 @@ class SQLiteStore:
             SELECT c.*, d.file_name, d.file_path, d.file_type
             FROM chunks c
             JOIN documents d ON d.doc_id = c.doc_id
-            WHERE c.chunk_id IN ({placeholders})
+            WHERE c.chunk_id IN ({placeholders}) AND d.deleted = 0
             """,
             chunk_ids,
         ).fetchall()
         return {int(row["chunk_id"]): dict(row) for row in rows}
+
+    def list_documents(self) -> List[Dict[str, Any]]:
+        rows = self.conn.execute(
+            """
+            SELECT doc_id, file_path, file_name, file_type, ingested_at, total_chunks, metadata
+            FROM documents
+            WHERE deleted = 0
+            ORDER BY ingested_at DESC
+            """
+        ).fetchall()
+        return [dict(row) for row in rows]
+
+    def get_document(self, doc_id: str) -> Optional[Dict[str, Any]]:
+        row = self.conn.execute(
+            """
+            SELECT doc_id, file_path, file_name, file_type, ingested_at, total_chunks, metadata
+            FROM documents
+            WHERE doc_id = ? AND deleted = 0
+            """,
+            (doc_id,),
+        ).fetchone()
+        return dict(row) if row else None
+
+    def get_document_by_file_path(self, file_path: str) -> Optional[Dict[str, Any]]:
+        row = self.conn.execute(
+            """
+            SELECT doc_id, file_path, file_name, file_type, ingested_at, total_chunks, metadata
+            FROM documents
+            WHERE file_path = ? AND deleted = 0
+            ORDER BY ingested_at DESC
+            LIMIT 1
+            """,
+            (file_path,),
+        ).fetchone()
+        return dict(row) if row else None
+
+    def mark_document_deleted(self, doc_id: str) -> bool:
+        result = self.conn.execute(
+            """
+            UPDATE documents
+            SET deleted = 1
+            WHERE doc_id = ? AND deleted = 0
+            """,
+            (doc_id,),
+        )
+        self.conn.commit()
+        return result.rowcount > 0
 
     def stats(self) -> Dict[str, int]:
         doc_count = self.conn.execute("SELECT COUNT(*) AS c FROM documents").fetchone()["c"]
