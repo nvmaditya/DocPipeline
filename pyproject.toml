@@ -1,0 +1,21 @@
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests", "backend/tests"]
+addopts = "-q"
+markers = [
+  "integration: integration tests",
+  "feature: feature-level tests"
+]
+
+[tool.coverage.run]
+branch = true
+source = ["backend", "docpipe"]
+omit = [
+  "*/__init__.py",
+  "*/__pycache__/*"
+]
+
+[tool.coverage.report]
+precision = 1
+skip_covered = false
+show_missing = true

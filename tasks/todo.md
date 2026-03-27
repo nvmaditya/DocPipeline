@@ -287,7 +287,7 @@ Implementation started. Initial backend scaffold and smoke tests are in place.
 ## Plan (Checkable)
 
 - [x] Add/expand backend integration and feature tests for auth, documents, search, and adapter behavior
-- [ ] Add pytest-cov configuration and generate baseline coverage report for backend packages
+- [x] Add pytest-cov configuration and generate baseline coverage report for backend packages
 - [ ] Enforce coverage gate (`>=80%`) per backend package and verify gating commands pass
 - [ ] Create one git commit per completed todo item and push to GitHub
 
@@ -300,6 +300,8 @@ Plan created per `guidelines.md`. Implementation starts now with test expansion,
 - Added `backend/tests/conftest.py` with shared runtime fixtures and dummy embedder.
 - Added feature/integration test modules for auth, documents, and search flows.
 - Verified backend integration test run passes.
+- Added `pytest-cov` dependency in `requirements.txt` and coverage configuration in `pyproject.toml`.
+- Generated baseline package coverage report in `tasks/w5-06-coverage-baseline.md`.
 
 ## Review
 
@@ -307,3 +309,7 @@ Plan created per `guidelines.md`. Implementation starts now with test expansion,
 
 - Command: `python -m pytest backend/tests -q`
 - Result: `14 passed, 3 warnings`
+- Baseline coverage commands rerun:
+	- `python -m pytest backend/tests --cov=backend.app.api --cov-report=term-missing` -> `TOTAL 91.8%`
+	- `python -m pytest backend/tests --cov=backend.app.services --cov-report=term-missing` -> `TOTAL 93.3%`
+	- `python -m pytest backend/tests --cov=backend.app.adapters --cov-report=term-missing` -> `TOTAL 92.7%`
