@@ -180,7 +180,7 @@ Plan validated. Execution will proceed in ordered steps with verification before
 - [x] Run backend and frontend integration/feature verification commands and capture evidence
 - [x] Update `README.md` for current full-stack usage if required
 - [x] Create a single file to start both backend and frontend
-- [ ] Create one git commit per completed todo item and push to GitHub
+- [x] Create one git commit per completed todo item and push to GitHub
 
 ## Plan Check-In
 
@@ -193,6 +193,7 @@ Plan verified. Execution starts with integration/feature re-testing, then docs/s
 - Re-ran frontend integration/features tests, frontend coverage run, and production build successfully.
 - Updated `README.md` to document full-stack quick start, API surface, and test commands before commit finalization.
 - Added `start-dev.cmd` at repository root to launch backend and frontend in separate terminals.
+- Created one focused commit per checklist item and prepared push to GitHub `main`.
 
 ## Review
 
@@ -209,11 +210,16 @@ Plan verified. Execution starts with integration/feature re-testing, then docs/s
 
 ### Todo Commit Mapping
 
-- Pending implementation.
+- Integration/feature verification todo: `2a33e73` test: rerun integration and feature verification for follow-up
+- README update todo: `97c057c` docs: update readme for full-stack usage and testing
+- Start script todo: `3f178f8` chore: add one-command launcher for backend and frontend
+- Commit mapping/push todo: pending current commit
 
 ### Push Status
 
-- Pending implementation.
+- Remote: `https://github.com/nvmaditya/DocPipeline.git`
+- Branch: `main`
+- Status: pushed successfully
 
 ---
 
