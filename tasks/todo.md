@@ -173,6 +173,32 @@ Plan validated. Execution will proceed in ordered steps with verification before
 
 ---
 
+# GitHub API Migration + Embedding Validation Todo (Mar 27, 2026)
+
+## Plan (Checkable)
+
+- [ ] Update workflow artifacts first (`tasks/todo.md`, `tasks/lessons.md`) and lock isolated commit scope
+- [ ] Run integration and feature verification tests and capture evidence
+- [ ] Replace Ollama-based LLM path with GitHub Models API path (OpenAI SDK + `GITHUB_TOKEN`)
+- [ ] Validate embedding on user-provided PDF path and persist run evidence
+- [ ] Try multiple GitHub embedding models and record comparative results
+- [ ] Create one commit per todo item above and push to GitHub
+
+## Plan Check-In
+
+Plan created per `guidelines.md` and approved by explicit user request to start implementation. Commit scope is isolated to this request's files only.
+
+## Progress Notes
+
+- Execution started.
+- Isolated commit scope confirmed due pre-existing unrelated worktree changes.
+
+## Review
+
+Pending execution.
+
+---
+
 # Phase 6 Follow-up: Retest + README + Start Script Todo
 
 ## Plan (Checkable)
