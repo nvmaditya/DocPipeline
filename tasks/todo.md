@@ -288,7 +288,7 @@ Implementation started. Initial backend scaffold and smoke tests are in place.
 
 - [x] Add/expand backend integration and feature tests for auth, documents, search, and adapter behavior
 - [x] Add pytest-cov configuration and generate baseline coverage report for backend packages
-- [ ] Enforce coverage gate (`>=80%`) per backend package and verify gating commands pass
+- [x] Enforce coverage gate (`>=80%`) per backend package and verify gating commands pass
 - [ ] Create one git commit per completed todo item and push to GitHub
 
 ## Plan Check-In
@@ -302,6 +302,7 @@ Plan created per `guidelines.md`. Implementation starts now with test expansion,
 - Verified backend integration test run passes.
 - Added `pytest-cov` dependency in `requirements.txt` and coverage configuration in `pyproject.toml`.
 - Generated baseline package coverage report in `tasks/w5-06-coverage-baseline.md`.
+- Executed per-package gate commands with `--cov-fail-under=80` for API, services, and adapters.
 
 ## Review
 
@@ -310,6 +311,10 @@ Plan created per `guidelines.md`. Implementation starts now with test expansion,
 - Command: `python -m pytest backend/tests -q`
 - Result: `14 passed, 3 warnings`
 - Baseline coverage commands rerun:
-	- `python -m pytest backend/tests --cov=backend.app.api --cov-report=term-missing` -> `TOTAL 91.8%`
-	- `python -m pytest backend/tests --cov=backend.app.services --cov-report=term-missing` -> `TOTAL 93.3%`
-	- `python -m pytest backend/tests --cov=backend.app.adapters --cov-report=term-missing` -> `TOTAL 92.7%`
+    - `python -m pytest backend/tests --cov=backend.app.api --cov-report=term-missing` -> `TOTAL 91.8%`
+    - `python -m pytest backend/tests --cov=backend.app.services --cov-report=term-missing` -> `TOTAL 93.3%`
+    - `python -m pytest backend/tests --cov=backend.app.adapters --cov-report=term-missing` -> `TOTAL 92.7%`
+- Coverage gate enforcement commands:
+    - `python -m pytest backend/tests --cov=backend.app.api --cov-fail-under=80 --cov-report=term` -> `Required test coverage of 80% reached (91.76%)`
+    - `python -m pytest backend/tests --cov=backend.app.services --cov-fail-under=80 --cov-report=term` -> `Required test coverage of 80% reached (93.27%)`
+    - `python -m pytest backend/tests --cov=backend.app.adapters --cov-fail-under=80 --cov-report=term` -> `Required test coverage of 80% reached (92.66%)`

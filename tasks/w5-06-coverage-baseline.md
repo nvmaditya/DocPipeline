@@ -13,14 +13,17 @@ Baseline measurements for backend package-level coverage before enforcing the ha
 ## Baseline Commands and Results
 
 1. python -m pytest backend/tests --cov=backend.app.api --cov-report=term-missing
+
 - Result: 14 passed
 - Package total coverage: 91.8%
 
 2. python -m pytest backend/tests --cov=backend.app.services --cov-report=term-missing
+
 - Result: 14 passed
 - Package total coverage: 93.3%
 
 3. python -m pytest backend/tests --cov=backend.app.adapters --cov-report=term-missing
+
 - Result: 14 passed
 - Package total coverage: 92.7%
 
