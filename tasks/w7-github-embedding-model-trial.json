@@ -1,0 +1,21 @@
+{
+  "pdf_path": "C:\\Code\\MinorProject\\document-pipeline\\store\\backend_users\\1d45383d-798c-4f9c-876d-a10960c1d152\\uploads\\2f9dfd65-c2d7-4e6f-9786-bf717c60598e_sepmunit3.pdf",
+  "sample_chars": 2000,
+  "models": [
+    {
+      "model": "openai/text-embedding-3-small",
+      "status": "error",
+      "error": "Missing GITHUB_TOKEN. Set it to call GitHub Models embeddings API."
+    },
+    {
+      "model": "openai/text-embedding-3-large",
+      "status": "error",
+      "error": "Missing GITHUB_TOKEN. Set it to call GitHub Models embeddings API."
+    },
+    {
+      "model": "openai/text-embedding-ada-002",
+      "status": "error",
+      "error": "Missing GITHUB_TOKEN. Set it to call GitHub Models embeddings API."
+    }
+  ]
+}

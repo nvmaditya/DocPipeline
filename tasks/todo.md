@@ -181,7 +181,7 @@ Plan validated. Execution will proceed in ordered steps with verification before
 - [x] Run integration and feature verification tests and capture evidence
 - [x] Replace Ollama-based LLM path with GitHub Models API path (OpenAI SDK + `GITHUB_TOKEN`)
 - [x] Validate embedding on user-provided PDF path and persist run evidence
-- [ ] Try multiple GitHub embedding models and record comparative results
+- [x] Try multiple GitHub embedding models and record comparative results
 - [ ] Create one commit per todo item above and push to GitHub
 
 ## Plan Check-In
@@ -196,6 +196,7 @@ Plan created per `guidelines.md` and approved by explicit user request to start 
 - Corrected one verification hiccup caused by terminal CWD drift and re-ran failed commands from repository root.
 - Migrated LLM/embedding integration to GitHub Models support with OpenAI SDK and GitHub-token-based runtime configuration.
 - Validated local embedding on `...sepmunit3.pdf` and persisted structured output in `tasks/w7-pdf-embedding-result.json`.
+- Ran GitHub embedding model trials and persisted outcomes in `tasks/w7-github-embedding-model-trial.json`.
 
 ## Review
 
@@ -205,6 +206,10 @@ Plan created per `guidelines.md` and approved by explicit user request to start 
 - `python -m pytest tests/test_embedder.py tests/test_extractors.py tests/test_chunkers.py tests/test_pipeline.py -q` -> pass (14 tests)
 - `cd frontend && npm run test` -> pass (6 files, 10 tests)
 - PDF embedding validation evidence file: `tasks/w7-pdf-embedding-result.json` (`status=ok`, `embedding_shape=[1, 384]`)
+- GitHub embedding trial evidence file: `tasks/w7-github-embedding-model-trial.json`
+    - `openai/text-embedding-3-small` -> blocked (`Missing GITHUB_TOKEN`)
+    - `openai/text-embedding-3-large` -> blocked (`Missing GITHUB_TOKEN`)
+    - `openai/text-embedding-ada-002` -> blocked (`Missing GITHUB_TOKEN`)
 
 ---
 
