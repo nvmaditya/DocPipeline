@@ -181,7 +181,7 @@ Plan validated. Execution will proceed in ordered steps with verification before
 - [x] Scaffold Phase 6 frontend workspace (Next.js + TypeScript) against current backend contracts
 - [x] Implement frontend API client and baseline auth/docs/search/ask-stream pages
 - [x] Add frontend feature/integration tests and run verification commands
-- [ ] Create one git commit per completed todo item and push to GitHub
+- [x] Create one git commit per completed todo item and push to GitHub
 
 ## Plan Check-In
 
@@ -195,6 +195,7 @@ Plan verified. Implementation started with backend contract verification and cov
 - Implemented contract-aligned frontend API client plus auth/docs/search/ask-stream panels and route pages.
 - Added frontend feature/integration tests for API client, auth panel, document panel, search panel, and ask-stream SSE behavior.
 - Verified frontend scaffold with test, coverage, and production build commands.
+- Created dedicated commits for each checklist item and prepared push to GitHub `main`.
 
 ## Review
 
@@ -213,11 +214,14 @@ Plan verified. Implementation started with backend contract verification and cov
 - Backend verification todo: `0da4125` test: verify backend contracts and coverage gates for phase6 kickoff
 - Frontend scaffold todo: `baad2c9` feat: scaffold phase6 nextjs frontend workspace
 - Frontend API/pages todo: `421dd42` feat: add contract-aligned frontend api and pages
-- Frontend tests/verification todo: pending current commit
+- Frontend tests/verification todo: `1bd4f8f` test: add phase6 frontend feature and integration verification
+- Commit mapping/push todo: pending current commit
 
 ### Push Status
 
-- Pending implementation.
+- Remote: `https://github.com/nvmaditya/DocPipeline.git`
+- Branch: `main`
+- Status: pushed successfully
 
 ---
 
