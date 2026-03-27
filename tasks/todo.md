@@ -178,7 +178,7 @@ Plan validated. Execution will proceed in ordered steps with verification before
 ## Plan (Checkable)
 
 - [x] Update workflow artifacts first (`tasks/todo.md`, `tasks/lessons.md`) and lock isolated commit scope
-- [ ] Run baseline integration and feature test suites and capture evidence
+- [x] Run baseline integration and feature test suites and capture evidence
 - [ ] Build global shared community vector databases and indexes for each top-level book in `Books/`
 - [ ] Add backend community database selection support for both semantic search and ask-stream
 - [ ] Add backend feature/integration tests for community database flows and regressions
@@ -193,12 +193,15 @@ Implementation started in strict sequence per `guidelines.md`.
 
 - Confirmed dirty worktree handling with user and locked path-scoped isolated commits.
 - Updated `tasks/lessons.md` and initialized this section before feature work.
+- Ran baseline domain, backend, and frontend integration/feature suites and captured results for review.
 
 ## Review
 
 ### Verification Evidence
 
-- Pending implementation and test execution.
+- `c:/Users/chhav/.PYENV/PYENV-WIN/versions/3.11.9/python.exe -m pytest tests/test_extractors.py tests/test_chunkers.py tests/test_pipeline.py -q` -> pass (`12 passed`).
+- `c:/Code/MinorProject/document-pipeline/.venv/Scripts/python.exe -m pytest backend/tests -q` -> pass (`16 passed`, warning-only run).
+- `cd frontend && npm run test` -> pass (`6 files, 10 tests`).
 
 ### Todo Commit Mapping
 
