@@ -179,8 +179,8 @@ Plan validated. Execution will proceed in ordered steps with verification before
 
 - [x] Update workflow artifacts first (`tasks/todo.md`, `tasks/lessons.md`) and lock isolated commit scope
 - [x] Run integration and feature verification tests and capture evidence
-- [ ] Redesign frontend UI/UX with professional spacing, hierarchy, and responsive behavior
-- [ ] Re-run frontend and integration verification after UI updates
+- [x] Redesign frontend UI/UX with professional spacing, hierarchy, and responsive behavior
+- [x] Re-run frontend and integration verification after UI updates
 - [ ] Create one commit per completed todo item and push to GitHub
 
 ## Plan Check-In
@@ -194,6 +194,8 @@ Plan verified and execution started in strict sequence per `guidelines.md`.
 - Ran pipeline integration/features suite and confirmed passing status.
 - Ran backend integration/features suite with project `.venv` interpreter and confirmed passing status.
 - Ran frontend feature/integration suite with Vitest and confirmed passing status.
+- Redesigned frontend shell/pages/panels with responsive layout classes, stronger hierarchy, improved spacing system, and accessibility-focused status/focus patterns.
+- Re-ran post-change pipeline, backend, frontend tests, and frontend production build with passing status.
 
 ## Review
 
@@ -202,6 +204,10 @@ Plan verified and execution started in strict sequence per `guidelines.md`.
 - `c:/Users/chhav/.PYENV/PYENV-WIN/versions/3.11.9/python.exe -m pytest tests/test_extractors.py tests/test_chunkers.py tests/test_pipeline.py -q` -> pass (`12 passed`)
 - `c:/Code/MinorProject/document-pipeline/.venv/Scripts/python.exe -m pytest backend/tests -q` -> pass (`16 passed`, warning-only run)
 - `cd frontend && npm run test` -> pass (`6 files, 10 tests`)
+- Post-change: `c:/Users/chhav/.PYENV/PYENV-WIN/versions/3.11.9/python.exe -m pytest tests/test_extractors.py tests/test_chunkers.py tests/test_pipeline.py -q` -> pass (`12 passed`)
+- Post-change: `c:/Code/MinorProject/document-pipeline/.venv/Scripts/python.exe -m pytest backend/tests -q` -> pass (`16 passed`, warning-only run)
+- Post-change: `cd frontend && npm run test` -> pass (`6 files, 10 tests`)
+- Post-change: `cd frontend && npm run build` -> pass (Next.js build success, static routes generated)
 
 ### Todo Commit Mapping
 
