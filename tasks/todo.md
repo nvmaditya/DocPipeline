@@ -173,6 +173,41 @@ Plan validated. Execution will proceed in ordered steps with verification before
 
 ---
 
+# Frontend UX Overhaul + Integration/Feature Testing Todo (Mar 27, 2026)
+
+## Plan (Checkable)
+
+- [ ] Update workflow artifacts first (`tasks/todo.md`, `tasks/lessons.md`) and lock isolated commit scope
+- [ ] Run integration and feature verification tests and capture evidence
+- [ ] Redesign frontend UI/UX with professional spacing, hierarchy, and responsive behavior
+- [ ] Re-run frontend and integration verification after UI updates
+- [ ] Create one commit per completed todo item and push to GitHub
+
+## Plan Check-In
+
+Plan verified and execution started in strict sequence per `guidelines.md`.
+
+## Progress Notes
+
+- Execution started.
+- Isolated commit scope confirmed due pre-existing unrelated worktree changes.
+
+## Review
+
+### Verification Evidence
+
+- Pending.
+
+### Todo Commit Mapping
+
+- Pending.
+
+### Push Status
+
+- Pending.
+
+---
+
 # Community Book Vector DB + Integration + Per-Todo Commits (Mar 27, 2026)
 
 ## Plan (Checkable)
