@@ -1,576 +1,112 @@
-# Phase 1 Planning Todo
+# VectorLearn — Task Board
 
-## Plan (Checkable)
-
-- [x] Confirm requirements from `guidelines.md`, `architecture.md`, and `idea.md`
-- [x] Check in on plan before implementation
-- [x] Create concise build checklist by file
-- [x] Create pre-coding risk list with mitigations
-- [x] Create Phase 1 implementation task board
-- [x] Verify deliverables for completeness and consistency
-- [x] Add final review section
-
-## Plan Check-In
-
-Plan accepted and execution started based on the explicit user request to strictly follow `guidelines.md` and complete all three planning deliverables.
-
-## Progress Notes
-
-- Initialized task tracking and execution order.
-- Added build checklist in `tasks/build-checklist.md`.
-- Added risk register in `tasks/risk-register.md`.
-- Added Phase 1 board in `tasks/phase1-task-board.md`.
-
-## Review
-
-### Deliverables Completed
-
-- Concise build checklist by file: `tasks/build-checklist.md`
-- Risk list with mitigation steps before coding: `tasks/risk-register.md`
-- Phase 1 implementation task board: `tasks/phase1-task-board.md`
-
-### Verification Notes
-
-- Scope alignment checked against Phase 1 definition in `architecture.md`.
-- Risks focus on pre-coding controls and explicit gating criteria.
-- Task board includes dependencies, acceptance criteria, and definition of done.
-- Artifacts are implementation-ready and maintain minimal-impact planning boundaries.
+## Status: All Core Phases Complete ✅
 
 ---
 
-# Phase 1 Implementation Todo
+## Active Work
 
-## Plan (Checkable)
+### Book Modules & Topic Extraction (Phase 12)
 
-- [x] Freeze Phase 1 scope and confirm pre-coding gate items
-- [x] Scaffold package, config, and dependency files
-- [x] Implement extractors, cleaner, and recursive chunker
-- [x] Implement embedder, FAISS store, and SQLite store
-- [x] Implement pipeline orchestration and CLI commands
-- [x] Add unit and integration tests with fixtures
-- [x] Execute verification commands and capture results
-- [x] Update task board statuses and final review
+- [x] Create `docpipe/topic_extractor.py` (3-stage engine: PDF TOC → LLM → cosine similarity)
+- [x] Add topics table + methods to `docpipe/store/sqlite_store.py`
+- [x] Add `get_community_topics()` to `PipelineAdapter`
+- [x] Add `GET /api/v1/community/databases/{id}/topics` endpoint
+- [x] Add Express proxy route for topics
+- [x] Update `Community.tsx` — "Ask Doubt" and "View Modules" buttons
+- [x] Create `BookModules.tsx` page
+- [x] Register `/book-modules/:databaseId` route in `App.tsx`
 
-## Plan Check-In
+### Full-Stack Integration & Feature Testing (Phase 11)
 
-Implementation plan approved and started in strict sequence with verification steps.
+- [x] Add `pytest-playwright` and `requests-mock` to `requirements.txt`
+- [x] Update `backend/tests/conftest.py` config for `ollama` and `phi3`
+- [x] Create `backend/tests/test_e2e_journeys.py` for comprehensive API flow testing
+- [x] Create `web_extractor/tests/test_pipeline_integration.py`
+- [x] Create frontend E2E tests in `tests/e2e/test_ui_flows.py`
+- [x] Run all tests to verify integration across modules
 
-## Progress Notes
+### Persistent Authentication & Community Fixes (Phase 9)
 
-- Implemented Phase 1 modules under `docpipe/` including extractors, cleaner, chunker, embedder, stores, query, and pipeline.
-- Implemented CLI in `main.py` with `ingest`, `query`, and `stats` commands.
-- Added configuration in `config.yaml` and dependency manifest in `requirements.txt`.
-- Added tests in `tests/test_extractors.py`, `tests/test_chunkers.py`, and `tests/test_pipeline.py`.
-- Installed dependencies and executed test suite via VS Code task.
+- [x] Transition `AuthService` from in-memory to SQLite database (`store/backend_users/auth.db`)
+- [x] Persist users and tokens to solve `401 Unauthorized` token wipes across restarts
+- [x] Fix community vector databases failing to load (cascade from 401 bug or another issue)
+- [x] Run backend tests and verify integration fixes
 
-## Review
+### Web Extractor UI Context (Phase 10)
 
-### Verification Evidence
+- [x] Add `create_module(topic)` handler to `CommunityService` orchestrating the pipeline
+- [x] Add `POST /api/v1/community/modules` to FastAPI router
+- [x] Add Express proxy `POST /community/modules` route
+- [x] Create UI view `CreateModule.tsx` for entering a topic 
+- [x] Add "Create Module" action card to `Dashboard.tsx`
+- [x] Add "Create Module" navigation link to `Sidebar.tsx`
+- [x] Register `/create-module` route in `App.tsx`
 
-- Static diagnostics: no remaining editor errors.
-- Automated tests: `4 passed, 1 warning in 25.08s` from `pytest -q`.
-- Warning observed is external package-compatibility warning from `requests` dependency stack and does not block project tests.
+### Community Vector DB Integration (Completed Mar 28, 2026)
 
-### Scope Compliance
-
-- Implemented only Phase 1 scope (PDF text + DOCX + recursive chunking + FlatIP + SQLite + CLI + tests).
-- Deferred OCR/scanned PDF and RAG features to later phases as planned.
-
----
-
-# Phase 2 + Testing + Commits Todo
-
-## Plan (Checkable)
-
-- [x] Update lessons for new user correction/request
-- [x] Initialize git repository and create initial baseline commit
-- [x] Implement Phase 2 format support (PPTX, XLSX/CSV, HTML, TXT/MD)
-- [x] Implement scanned PDF OCR path with optional engines
-- [x] Add/extend feature and integration tests for Phase 2 paths
-- [x] Run full test verification and capture output evidence
-- [x] Create one commit per completed todo step
-- [x] Attempt GitHub remote setup/push and report outcome
-- [x] Update final review section with proof
-
-## Plan Check-In
-
-Plan for this user request is verified and execution started in strict sequence.
-
-## Progress Notes
-
-- Updated `tasks/lessons.md` for this correction/request pattern.
-- Initialized git and created baseline commit.
-- Implemented Phase 2 extractors and OCR path.
-- Added and updated integration/feature tests.
-- Ran pytest for feature + integration coverage.
-- Created multiple focused commits and pushed to GitHub remote.
-
-## Review
-
-### Verification Evidence
-
-- Feature/integration test run completed with final result: `8 passed, 1 warning in 26.92s`.
-- Warning is `RequestsDependencyWarning` and non-blocking for project tests.
-
-### Commit Evidence (Per Todo Progress)
-
-- `761c972` chore: initial baseline commit
-- `f5dcb2e` chore: ignore generated artifacts
-- `aace720` feat: add phase2 extractors and scanned-pdf OCR path
-- `a5b3bd3` chore: update phase2 dependencies and configuration
-- `32f89a0` test: add phase2 feature and integration coverage
-
-### Remote Push Evidence
-
-- Remote: `https://github.com/nvmaditya/DocPipeline.git`
-- Branch: `main`
-- Push status: successful (`main -> main`)
+- [x] Wire community router in `backend/app/main.py`
+- [x] Optimize `list_databases()` to use manifest.json cache (no re-bootstrap on API calls)
+- [x] Filter stale manifest entries when FAISS index is missing (books removed from Books/)
+- [x] Rewrite `Community.tsx` — remove all 13 hardcoded mock subjects, fetch from real API
+- [x] Update `ChatContext.tsx` to carry `communityDatabaseId`
+- [x] Update `Ask.tsx` — pass `database_id` to backend, remove hardcoded plugin contexts
+- [x] Update Express `ask.ts` and `search.ts` — forward `databaseId` to FastAPI
+- [x] Add community isolation to conftest.py
+- [x] Add community integration tests in `test_community_integration.py`
+- [x] Add `build_book_databases.py` — per-book build script using docpipe directly
+- [x] Add stale store cleanup to build script (removes indexes for books deleted from Books/)
+- [x] Switch embedding to Ollama `bge-large` (local, OpenAI-compatible)
+- [x] Fix chunk_size to 380 chars for bge-large's 512-token context limit
+- [x] Add Ollama preflight check to build script
 
 ---
 
-# Phase 3 Implementation + Testing + Commits Todo
+## Maintenance Tasks
 
-## Plan (Checkable)
+### On adding a new book
 
-- [x] Implement Phase 3 features (semantic chunking, HNSW option, stronger model defaults, heading context improvements)
-- [x] Add feature and integration tests for Phase 3 paths
-- [x] Run verification tests and capture evidence
-- [x] Create one commit per todo item and push to GitHub
-- [x] Update review section with outcomes and proof
+1. Drop PDF into `Books/`
+2. Run: `.venv\Scripts\python.exe build_book_databases.py`
+3. Book appears in Community tab on next API call
 
-## Plan Check-In
+### On removing a book
 
-Plan validated. Execution will proceed in ordered steps with verification before completion.
+1. Delete PDF from `Books/`
+2. Run: `.venv\Scripts\python.exe build_book_databases.py`
+3. Old store cleaned, manifest updated, book disappears from Community tab
 
-## Progress Notes
+### On changing embedding model
 
-- Implemented semantic chunking and strategy selection in pipeline.
-- Added HNSW index option and tuning parameters in FAISS store and config.
-- Added PDF heading-context detection heuristic.
-- Added feature and integration tests for semantic chunking, HNSW, and heading context.
-- Ran Phase 3 test suite and captured pass result.
-- Created todo-based commits and pushed to GitHub.
-
-## Review
-
-### Verification Evidence
-
-- Command: `python -m pytest tests/test_extractors.py tests/test_chunkers.py tests/test_pipeline.py -q`
-- Result: `10 passed, 1 warning in 26.65s`
-- Warning: `RequestsDependencyWarning` from external dependency stack, non-blocking.
-
-### Todo Commit Mapping
-
-- Phase 3 implementation: `1da4e20` feat: implement phase3 semantic chunking and hnsw retrieval
-- Testing todo: `18e9122` test: add phase3 feature and integration coverage
-- Workflow/docs/push todo: included in follow-up commit with review updates
-
-### Push Status
-
-- Remote: `https://github.com/nvmaditya/DocPipeline.git`
-- Branch: `main`
-- Status: pushed successfully
+1. Update `config.yaml` → `embedding.model` and `embedding.github_endpoint`
+2. Run: `.venv\Scripts\python.exe build_book_databases.py --force` (rebuilds all incompatible indexes)
 
 ---
 
-# Frontend UX Overhaul + Integration/Feature Testing Todo (Mar 27, 2026)
+## Completed Phases Summary
 
-## Plan (Checkable)
-
-- [x] Update workflow artifacts first (`tasks/todo.md`, `tasks/lessons.md`) and lock isolated commit scope
-- [x] Run integration and feature verification tests and capture evidence
-- [x] Redesign frontend UI/UX with professional spacing, hierarchy, and responsive behavior
-- [x] Re-run frontend and integration verification after UI updates
-- [x] Create one commit per completed todo item and push to GitHub
-
-## Plan Check-In
-
-Plan verified and execution started in strict sequence per `guidelines.md`.
-
-## Progress Notes
-
-- Execution started.
-- Isolated commit scope confirmed due pre-existing unrelated worktree changes.
-- Ran pipeline integration/features suite and confirmed passing status.
-- Ran backend integration/features suite with project `.venv` interpreter and confirmed passing status.
-- Ran frontend feature/integration suite with Vitest and confirmed passing status.
-- Redesigned frontend shell/pages/panels with responsive layout classes, stronger hierarchy, improved spacing system, and accessibility-focused status/focus patterns.
-- Re-ran post-change pipeline, backend, frontend tests, and frontend production build with passing status.
-
-## Review
-
-### Verification Evidence
-
-- `c:/Users/chhav/.PYENV/PYENV-WIN/versions/3.11.9/python.exe -m pytest tests/test_extractors.py tests/test_chunkers.py tests/test_pipeline.py -q` -> pass (`12 passed`)
-- `c:/Code/MinorProject/document-pipeline/.venv/Scripts/python.exe -m pytest backend/tests -q` -> pass (`16 passed`, warning-only run)
-- `cd frontend && npm run test` -> pass (`6 files, 10 tests`)
-- Post-change: `c:/Users/chhav/.PYENV/PYENV-WIN/versions/3.11.9/python.exe -m pytest tests/test_extractors.py tests/test_chunkers.py tests/test_pipeline.py -q` -> pass (`12 passed`)
-- Post-change: `c:/Code/MinorProject/document-pipeline/.venv/Scripts/python.exe -m pytest backend/tests -q` -> pass (`16 passed`, warning-only run)
-- Post-change: `cd frontend && npm run test` -> pass (`6 files, 10 tests`)
-- Post-change: `cd frontend && npm run build` -> pass (Next.js build success, static routes generated)
-
-### Todo Commit Mapping
-
-- Workflow artifacts todo: `b4da310` chore: initialize ux-overhaul todo and lessons
-- Integration/features baseline todo: `9c2ee03` test: capture integration and feature baseline results
-- Frontend UX redesign todo: `a3ae57f` feat: overhaul frontend ux and responsive layout
-- Post-change verification todo: `6cc7e28` test: record post-ui integration and feature verification
-- Commit mapping/push todo: `25c04d7` chore: finalize ux-overhaul commit mapping and push tracking
-
-### Push Status
-
-- Remote: `https://github.com/nvmaditya/DocPipeline.git`
-- Branch: `main`
-- Status: pushed successfully (`main -> main`)
+| Phase | Description | Status |
+|---|---|---|
+| 1 | Core domain pipeline (extract, chunk, embed, store) | ✅ Done |
+| 2 | CLI ingestion and query | ✅ Done |
+| 3 | HNSW + semantic chunking + retrieval tuning | ✅ Done |
+| 4 | RAG answer generation (SSE streaming) | ✅ Done |
+| 5 | FastAPI backend + JWT auth + user isolation | ✅ Done |
+| 6 | React frontend (Dashboard, Documents, Search, Ask) | ✅ Done |
+| 7 | Express proxy + SSE integration + Community section | ✅ Done |
+| 8 | Community vector DBs + Ollama embeddings + cleanup | ✅ Done |
 
 ---
 
-# Community Book Vector DB + Integration + Per-Todo Commits (Mar 27, 2026)
+## Known Limitations
 
-## Plan (Checkable)
-
-- [x] Update workflow artifacts first (`tasks/todo.md`, `tasks/lessons.md`) and lock isolated commit scope
-- [x] Run baseline integration and feature test suites and capture evidence
-- [ ] Build global shared community vector databases and indexes for each top-level book in `Books/`
-- [ ] Add backend community database selection support for both semantic search and ask-stream
-- [ ] Add backend feature/integration tests for community database flows and regressions
-- [ ] Add frontend community page and database selector wiring for search and chatbot flows
-- [ ] Add frontend tests plus full verification run, then create one commit and push per todo item
-
-## Plan Check-In
-
-Implementation started in strict sequence per `guidelines.md`.
-
-## Progress Notes
-
-- Confirmed dirty worktree handling with user and locked path-scoped isolated commits.
-- Updated `tasks/lessons.md` and initialized this section before feature work.
-- Ran baseline domain, backend, and frontend integration/feature suites and captured results for review.
-
-## Review
-
-### Verification Evidence
-
-- `c:/Users/chhav/.PYENV/PYENV-WIN/versions/3.11.9/python.exe -m pytest tests/test_extractors.py tests/test_chunkers.py tests/test_pipeline.py -q` -> pass (`12 passed`).
-- `c:/Code/MinorProject/document-pipeline/.venv/Scripts/python.exe -m pytest backend/tests -q` -> pass (`16 passed`, warning-only run).
-- `cd frontend && npm run test` -> pass (`6 files, 10 tests`).
-
-### Todo Commit Mapping
-
-- Pending.
-
-### Push Status
-
-- Pending.
+- `bge-large` max context: 512 tokens → chunk_size capped at 380 chars
+- OCR for scanned PDFs is best-effort (`ocr_engine: none` by default)
+- No persistent chat history (session-only)
+- Single backend instance (no horizontal scaling)
 
 ---
 
-# GitHub API Migration + Embedding Validation Todo (Mar 27, 2026)
+## Lessons Learned
 
-## Plan (Checkable)
-
-- [x] Update workflow artifacts first (`tasks/todo.md`, `tasks/lessons.md`) and lock isolated commit scope
-- [x] Run integration and feature verification tests and capture evidence
-- [x] Replace Ollama-based LLM path with GitHub Models API path (OpenAI SDK + `GITHUB_TOKEN`)
-- [x] Validate embedding on user-provided PDF path and persist run evidence
-- [x] Try multiple GitHub embedding models and record comparative results
-- [x] Create one commit per todo item above and push to GitHub
-
-## Plan Check-In
-
-Plan created per `guidelines.md` and approved by explicit user request to start implementation. Commit scope is isolated to this request's files only.
-
-## Progress Notes
-
-- Execution started.
-- Isolated commit scope confirmed due pre-existing unrelated worktree changes.
-- Ran integration/feature verification across backend, pipeline, and frontend suites.
-- Corrected one verification hiccup caused by terminal CWD drift and re-ran failed commands from repository root.
-- Migrated LLM/embedding integration to GitHub Models support with OpenAI SDK and GitHub-token-based runtime configuration.
-- Validated local embedding on `...sepmunit3.pdf` and persisted structured output in `tasks/w7-pdf-embedding-result.json`.
-- Ran GitHub embedding model trials and persisted outcomes in `tasks/w7-github-embedding-model-trial.json`.
-
-## Review
-
-### Verification Evidence (Completed So Far)
-
-- `python -m pytest backend/tests -q` -> pass (16 tests)
-- `python -m pytest tests/test_embedder.py tests/test_extractors.py tests/test_chunkers.py tests/test_pipeline.py -q` -> pass (14 tests)
-- `cd frontend && npm run test` -> pass (6 files, 10 tests)
-- PDF embedding validation evidence file: `tasks/w7-pdf-embedding-result.json` (`status=ok`, `embedding_shape=[1, 384]`)
-- GitHub embedding trial evidence file: `tasks/w7-github-embedding-model-trial.json`
-    - `openai/text-embedding-3-small` -> blocked (`Missing GITHUB_TOKEN`)
-    - `openai/text-embedding-3-large` -> blocked (`Missing GITHUB_TOKEN`)
-    - `openai/text-embedding-ada-002` -> blocked (`Missing GITHUB_TOKEN`)
-
-### Todo Commit Mapping
-
-- Workflow artifacts todo: `6adb561` chore: initialize github-api migration todo and lessons
-- Integration/features testing todo: `978b0da` test: run integration and feature verification suites
-- GitHub API migration todo: `d4df107` feat: migrate rag and embedding clients to github models api
-- PDF embedding validation todo: `7f05309` test: validate embedding on provided pdf sample
-- GitHub embedding model trial todo: `fdd477f` test: trial github embedding models on pdf sample
-
----
-
-# Phase 6 Follow-up: Retest + README + Start Script Todo
-
-## Plan (Checkable)
-
-- [x] Run backend and frontend integration/feature verification commands and capture evidence
-- [x] Update `README.md` for current full-stack usage if required
-- [x] Create a single file to start both backend and frontend
-- [x] Create one git commit per completed todo item and push to GitHub
-
-## Plan Check-In
-
-Plan verified. Execution starts with integration/feature re-testing, then docs/script updates, then per-todo commits and push.
-
-## Progress Notes
-
-- Started execution and locked commit scope to this new section and request-specific artifacts.
-- Re-ran backend integration/features tests and backend package coverage gates successfully.
-- Re-ran frontend integration/features tests, frontend coverage run, and production build successfully.
-- Updated `README.md` to document full-stack quick start, API surface, and test commands before commit finalization.
-- Added `start-dev.cmd` at repository root to launch backend and frontend in separate terminals.
-- Created one focused commit per checklist item and prepared push to GitHub `main`.
-
-## Review
-
-### Verification Evidence
-
-- `python -m pytest backend/tests -q` -> pass (14 passed)
-- `python -m pytest backend/tests --cov=backend.app.api --cov-fail-under=80 --cov-report=term` -> pass (91.76%)
-- `python -m pytest backend/tests --cov=backend.app.services --cov-fail-under=80 --cov-report=term` -> pass (93.27%)
-- `python -m pytest backend/tests --cov=backend.app.adapters --cov-fail-under=80 --cov-report=term` -> pass (92.66%)
-- `cd frontend && npm run test` -> pass (6 files, 10 tests)
-- `cd frontend && npm run test:cov` -> pass (all files lines 85.01%, statements 85.01%)
-- `cd frontend && npm run build` -> pass (Next.js 16.2.1 build success)
-- `start-dev.cmd` -> pass (backend/frontend terminals launched)
-
-### Todo Commit Mapping
-
-- Integration/feature verification todo: `2a33e73` test: rerun integration and feature verification for follow-up
-- README update todo: `97c057c` docs: update readme for full-stack usage and testing
-- Start script todo: `3f178f8` chore: add one-command launcher for backend and frontend
-- Commit mapping/push todo: pending current commit
-
-### Push Status
-
-- Remote: `https://github.com/nvmaditya/DocPipeline.git`
-- Branch: `main`
-- Status: pushed successfully
-
----
-
-# Phase 6 Frontend Scaffold + Integration Verification Todo
-
-## Plan (Checkable)
-
-- [x] Re-run backend integration and feature tests to lock live API contracts
-- [x] Scaffold Phase 6 frontend workspace (Next.js + TypeScript) against current backend contracts
-- [x] Implement frontend API client and baseline auth/docs/search/ask-stream pages
-- [x] Add frontend feature/integration tests and run verification commands
-- [x] Create one git commit per completed todo item and push to GitHub
-
-## Plan Check-In
-
-Plan verified. Implementation started with backend contract verification and coverage gate re-check.
-
-## Progress Notes
-
-- Re-ran backend integration/features suite and confirmed contract stability for auth, docs, semantic search, and SSE ask stream.
-- Re-ran backend package coverage gates with `--cov-fail-under=80` for API/services/adapters and confirmed all pass.
-- Created frontend workspace scaffold under `frontend/` with Next.js + TypeScript config, env template, and test tooling bootstrap.
-- Implemented contract-aligned frontend API client plus auth/docs/search/ask-stream panels and route pages.
-- Added frontend feature/integration tests for API client, auth panel, document panel, search panel, and ask-stream SSE behavior.
-- Verified frontend scaffold with test, coverage, and production build commands.
-- Created dedicated commits for each checklist item and prepared push to GitHub `main`.
-
-## Review
-
-### Verification Evidence
-
-- `python -m pytest backend/tests -q` -> pass (integration/features suite)
-- `python -m pytest backend/tests --cov=backend.app.api --cov-fail-under=80 --cov-report=term` -> pass (91.76%)
-- `python -m pytest backend/tests --cov=backend.app.services --cov-fail-under=80 --cov-report=term` -> pass (93.27%)
-- `python -m pytest backend/tests --cov=backend.app.adapters --cov-fail-under=80 --cov-report=term` -> pass (92.66%)
-- `cd frontend && npm run test` -> pass (`6 files, 10 tests`)
-- `cd frontend && npm run test:cov` -> pass (`All files lines/statements 84.57%`, thresholds satisfied)
-- `cd frontend && npm run build` -> pass (Next.js static routes generated)
-
-### Todo Commit Mapping
-
-- Backend verification todo: `0da4125` test: verify backend contracts and coverage gates for phase6 kickoff
-- Frontend scaffold todo: `baad2c9` feat: scaffold phase6 nextjs frontend workspace
-- Frontend API/pages todo: `421dd42` feat: add contract-aligned frontend api and pages
-- Frontend tests/verification todo: `1bd4f8f` test: add phase6 frontend feature and integration verification
-- Commit mapping/push todo: pending current commit
-
-### Push Status
-
-- Remote: `https://github.com/nvmaditya/DocPipeline.git`
-- Branch: `main`
-- Status: pushed successfully
-
----
-
-# Phase 4 Implementation + Testing + Commits Todo
-
-## Plan (Checkable)
-
-- [x] Implement Phase 4 RAG layer (local LLM answer generation with retrieved chunk grounding)
-- [x] Run integration and feature tests for Phase 4 changes
-- [x] Create one GitHub commit per todo and push
-
-## Plan Check-In
-
-Plan verified and approved. Implementation will proceed in sequence with verification before finalization.
-
-## Progress Notes
-
-- Implemented RAG prompt and source helpers plus pipeline `ask()` flow.
-- Added CLI `--rag` mode and Phase 4 query config options.
-- Added integration and feature tests for RAG helpers and `ask()` with mocked LLM client.
-- Executed test suite and captured verification output.
-- Created todo-mapped commits and pushed to GitHub.
-
-## Review
-
-### Verification Evidence
-
-- Command: `python -m pytest tests/test_extractors.py tests/test_chunkers.py tests/test_pipeline.py -q`
-- Result: `12 passed, 1 warning in 29.30s`
-- Warning: `RequestsDependencyWarning` from dependency stack, non-blocking.
-
-### Todo Commit Mapping
-
-- Phase 4 implementation todo: `f6da72f` feat: implement phase4 rag answer generation with ollama backend
-- Testing todo: `40c4b8c` test: add phase4 rag integration and helper coverage
-- Push/workflow todo: included in follow-up commit with tracking updates
-
-### Push Status
-
-- Remote: `https://github.com/nvmaditya/DocPipeline.git`
-- Branch: `main`
-- Status: pushed successfully
-
----
-
-# Website Pivot Documentation Sync Todo
-
-## Plan (Checkable)
-
-- [x] Replace `architecture.md` with website-first target architecture and module gates
-- [x] Replace `idea.md` with web product direction and locked MVP assumptions
-- [x] Add future phase sections to task artifacts (`todo`, checklist, risks, board, lessons)
-- [x] Run cross-doc consistency pass for terminology and assumptions
-- [x] Preserve historical Phase 1-4 records while adding future roadmap
-
-## Plan Check-In
-
-Execution started after planning handoff. Scope is documentation-only sync for the website pivot.
-
-## Progress Notes
-
-- Updated architecture narrative from CLI-first to FastAPI + Next.js website direction.
-- Reframed idea document around productized study workflow delivery.
-- Added future roadmap sections to all task support files.
-
-## Review
-
-### Verification Evidence
-
-- Contradictory forward-looking statements about single-user CLI-only direction were removed from core vision docs.
-- Locked assumptions are now explicit across docs: single instance backend, SSE-first ask flow, hybrid frontend persistence, and package coverage gates.
-- Historical implementation evidence for Phase 1-4 is retained.
-
----
-
-# Phase 5 Backend Foundation Todo
-
-## Plan (Checkable)
-
-- [x] Create `backend/app/main.py` FastAPI application entrypoint
-- [x] Add API routers: `auth`, `documents`, `search`
-- [x] Add services for auth, document orchestration, and semantic search
-- [x] Add adapter layer to reuse existing `docpipe` pipeline modules
-- [x] Add endpoint tests for `/api/v1/auth/*`, `/api/v1/docs/*`, `/api/v1/search/semantic`
-- [x] Add SSE endpoint test for `/api/v1/search/ask/stream`
-- [ ] Meet package-level test gate (>=80%) for backend packages
-
-## Plan Check-In
-
-Implementation started. Initial backend scaffold and smoke tests are in place.
-
-## Progress Notes
-
-- Created `backend/app/main.py`, dependency wiring, and API router modules.
-- Added in-memory service layer for auth, document metadata, search, and ask stream.
-- Added backend smoke tests in `backend/tests/test_api_smoke.py`.
-- Installed backend API dependencies in project venv.
-- Verified backend smoke tests and full suite pass after scaffold.
-- Added `PipelineAdapter` and rewired document/search services to use live `docpipe` ingest and search.
-- Extended SQLite store with document query and soft-delete support to keep deleted docs out of list/search responses.
-
-## Review
-
-### Verification Evidence
-
-- Backend API tests: `python -m pytest backend/tests/test_api_smoke.py -q` -> `5 passed`.
-- Full project tests: `python -m pytest -q` -> `17 passed`.
-- Adapter integration status: live `docpipe` ingest/search path is active behind backend services.
-- Remaining open item: package coverage gate report and enforcement (`>=80%` per package).
-
----
-
-# W5-06 Coverage Rollout + Integration Testing Todo
-
-## Plan (Checkable)
-
-- [x] Add/expand backend integration and feature tests for auth, documents, search, and adapter behavior
-- [x] Add pytest-cov configuration and generate baseline coverage report for backend packages
-- [x] Enforce coverage gate (`>=80%`) per backend package and verify gating commands pass
-- [x] Create one git commit per completed todo item and push to GitHub
-
-## Plan Check-In
-
-Plan created per `guidelines.md`. Implementation starts now with test expansion, then coverage baseline, then gate enforcement.
-
-## Progress Notes
-
-- Added `backend/tests/conftest.py` with shared runtime fixtures and dummy embedder.
-- Added feature/integration test modules for auth, documents, and search flows.
-- Verified backend integration test run passes.
-- Added `pytest-cov` dependency in `requirements.txt` and coverage configuration in `pyproject.toml`.
-- Generated baseline package coverage report in `tasks/w5-06-coverage-baseline.md`.
-- Executed per-package gate commands with `--cov-fail-under=80` for API, services, and adapters.
-- Created dedicated commits for each completed checklist item and pushed to GitHub `main`.
-
-## Review
-
-### Verification Evidence
-
-- Command: `python -m pytest backend/tests -q`
-- Result: `14 passed, 3 warnings`
-- Baseline coverage commands rerun:
-    - `python -m pytest backend/tests --cov=backend.app.api --cov-report=term-missing` -> `TOTAL 91.8%`
-    - `python -m pytest backend/tests --cov=backend.app.services --cov-report=term-missing` -> `TOTAL 93.3%`
-    - `python -m pytest backend/tests --cov=backend.app.adapters --cov-report=term-missing` -> `TOTAL 92.7%`
-- Coverage gate enforcement commands:
-    - `python -m pytest backend/tests --cov=backend.app.api --cov-fail-under=80 --cov-report=term` -> `Required test coverage of 80% reached (91.76%)`
-    - `python -m pytest backend/tests --cov=backend.app.services --cov-fail-under=80 --cov-report=term` -> `Required test coverage of 80% reached (93.27%)`
-    - `python -m pytest backend/tests --cov=backend.app.adapters --cov-fail-under=80 --cov-report=term` -> `Required test coverage of 80% reached (92.66%)`
-
-### Todo Commit Mapping
-
-- Integration/features tests todo: `ff15166` test: add backend integration and feature test suite
-- Coverage baseline todo: `c4c6249` test: add w5-06 coverage config and baseline report
-- Coverage gate todo: `2025091` test: enforce w5-06 per-package coverage gate
-- Todo commit/push tracking todo: pending current commit
-
-### Push Status
-
-- Remote: `https://github.com/nvmaditya/DocPipeline.git`
-- Branch: `main`
-- Status: pushed successfully
+See `tasks/lessons.md`

@@ -7,6 +7,7 @@ from typing import Annotated
 from fastapi import Depends, Header, HTTPException, Request
 
 from .services.auth_service import AuthService
+from .services.community_service import CommunityService
 from .services.document_service import DocumentService
 from .services.search_service import SearchService
 
@@ -21,6 +22,10 @@ def get_document_service(request: Request) -> DocumentService:
 
 def get_search_service(request: Request) -> SearchService:
     return request.app.state.search_service
+
+
+def get_community_service(request: Request) -> CommunityService:
+    return request.app.state.community_service
 
 
 def get_current_user_id(

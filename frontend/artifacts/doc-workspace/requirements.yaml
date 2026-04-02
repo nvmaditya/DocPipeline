@@ -1,0 +1,16 @@
+packages:
+  "framer-motion": "For smooth page transitions and beautiful micro-interactions in the dashboard."
+  "react-dropzone": "Required for the drag-and-drop file upload interface on the Documents page."
+  "date-fns": "For elegant, human-readable date formatting across the app."
+  "clsx": "Utility for constructing className strings conditionally."
+  "tailwind-merge": "Utility for merging Tailwind classes safely."
+
+images:
+  - path: "artifacts/doc-workspace/public/images/dashboard-hero.png"
+    description: "Abstract minimal geometric waves in dark professional navy blue, indigo, and deep slate. Very subtle, premium, and sophisticated knowledge-base atmosphere."
+    aspect_ratio: "16:9"
+
+notes:
+  - "The app uses a dark mode professional theme by default."
+  - "Using TanStack Query hooks generated in @workspace/api-client-react."
+  - "Assuming shadcn/ui components exist as per directory structure, standardizing utility functions."

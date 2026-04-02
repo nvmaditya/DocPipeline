@@ -1,6 +1,15 @@
 from fastapi.testclient import TestClient
 
 
+def test_upload_requires_auth(client: TestClient) -> None:
+    response = client.post(
+        "/api/v1/docs/upload",
+        files={"file": ("notes.txt", b"alpha beta gamma")},
+    )
+
+    assert response.status_code == 401
+
+
 def test_upload_list_get_delete_document(client: TestClient, auth_headers) -> None:
     headers = auth_headers("doc-user@example.com")
 

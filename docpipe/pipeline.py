@@ -155,6 +155,12 @@ class Pipeline:
         prompt = build_rag_prompt(question, ranked)
         sources = collect_sources(ranked)
 
+        if str(query_cfg.get("use_llm", "true")).lower() == "false":
+            return {
+                "response": "I found relevant documents but LLM processing is disabled locally. Please review the sources below.",
+                "sources": sources,
+            }
+
         if llm_client is not None:
             response = llm_client(prompt, model)
             return {"response": response, "sources": sources}
@@ -183,7 +189,10 @@ class Pipeline:
     def _ask_with_github_models(self, prompt: str, model: str, endpoint: str, token_env: str) -> str:
         token = os.getenv(token_env)
         if not token:
-            raise RuntimeError(f"Missing {token_env}. Set it to call GitHub Models chat API.")
+            if "localhost" in endpoint or "127.0.0.1" in endpoint:
+                token = "ollama"
+            else:
+                raise RuntimeError(f"Missing {token_env}. Set this environment variable to use the chat API.")
 
         try:
             from openai import OpenAI

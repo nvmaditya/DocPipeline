@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "DocMind - Document Intelligence"
+version = "1.0.0"
+id = "artifacts/doc-workspace"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25585
+
+[services.development]
+run = "pnpm --filter @workspace/doc-workspace run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/doc-workspace", "run", "build" ]
+publicDir = "artifacts/doc-workspace/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25585"
+BASE_PATH = "/"

@@ -79,7 +79,24 @@ def test_health_endpoint() -> None:
     assert response.json()["status"] == "ok"
 
 
-def test_auth_login_and_me() -> None:
+def test_cors_preflight_auth_register() -> None:
+    client = TestClient(create_app())
+
+    response = client.options(
+        "/api/v1/auth/register",
+        headers={
+            "Origin": "http://localhost:3000",
+            "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Headers": "content-type",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.headers.get("access-control-allow-origin") == "*"
+
+
+def test_auth_login_and_me(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.setenv("BACKEND_USER_STORE_ROOT", str(tmp_path / "users-store"))
     client = TestClient(create_app())
     payload = {"email": "user@example.com", "password": "password123"}
 

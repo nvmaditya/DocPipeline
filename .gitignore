@@ -1,13 +1,41 @@
+# Python
 __pycache__/
 *.py[cod]
 *.pyo
 .pytest_cache/
 .venv/
+.coverage
+htmlcov/
+
+# Env
 .env
 .env.*
+!.env.example
+
+# Stores (generated data — not committed)
 /store/
-.vscode/
-.coverage
+
+# Build artifacts
+*.log
+build_output.log
+_cleanup.py
+
+# Node
 frontend/node_modules/
 frontend/.next/
 frontend/coverage/
+frontend/artifacts/doc-workspace/dist/
+frontend/artifacts/api-server/dist/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Data and Cache
+books/
+web_extractor/cache/
+web_extractor/outputs/
+_tmp*
+_test_toc*.py
+_test_toc_dump.py

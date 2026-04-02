@@ -51,6 +51,15 @@ class SQLiteStore:
             """
         )
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_chunks_doc_id ON chunks(doc_id)")
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS topics (
+                topic_id INTEGER PRIMARY KEY,
+                topic_name TEXT NOT NULL,
+                chunk_ids_json TEXT NOT NULL DEFAULT '[]'
+            )
+            """
+        )
         self.conn.commit()
 
     def add_document(self, doc_meta: Dict[str, Any], total_chunks: int) -> None:
@@ -167,6 +176,41 @@ class SQLiteStore:
         doc_count = self.conn.execute("SELECT COUNT(*) AS c FROM documents").fetchone()["c"]
         chunk_count = self.conn.execute("SELECT COUNT(*) AS c FROM chunks").fetchone()["c"]
         return {"documents": int(doc_count), "chunks": int(chunk_count)}
+
+    # ------------------------------------------------------------------
+    #  Topic storage
+    # ------------------------------------------------------------------
+
+    def get_topics(self) -> List[Dict[str, Any]]:
+        rows = self.conn.execute(
+            "SELECT topic_id, topic_name, chunk_ids_json FROM topics ORDER BY topic_id"
+        ).fetchall()
+        results: List[Dict[str, Any]] = []
+        for row in rows:
+            chunk_ids = json.loads(row["chunk_ids_json"])
+            results.append({
+                "topic_id": int(row["topic_id"]),
+                "name": str(row["topic_name"]),
+                "chunk_ids": chunk_ids,
+                "chunk_count": len(chunk_ids),
+            })
+        return results
+
+    def save_topics(self, topics: List[Dict[str, Any]]) -> None:
+        self.conn.execute("DELETE FROM topics")
+        for t in topics:
+            self.conn.execute(
+                "INSERT INTO topics (topic_id, topic_name, chunk_ids_json) VALUES (?, ?, ?)",
+                (t["topic_id"], t["name"], json.dumps(t.get("chunk_ids", []))),
+            )
+        self.conn.commit()
+
+    def get_all_chunks(self) -> List[Dict[str, Any]]:
+        """Return all chunks ordered by chunk_id."""
+        rows = self.conn.execute(
+            "SELECT chunk_id, chunk_text FROM chunks ORDER BY chunk_id"
+        ).fetchall()
+        return [dict(row) for row in rows]
 
     def close(self) -> None:
         self.conn.close()

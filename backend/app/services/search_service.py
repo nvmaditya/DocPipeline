@@ -13,10 +13,45 @@ class SearchService:
         self._pipeline_adapter = pipeline_adapter
         self._rag_service = rag_service or RagService()
 
-    def semantic_search(self, user_id: str, query: str, top_k: int) -> list[dict]:
-        return self._pipeline_adapter.semantic_search(user_id=user_id, query=query, top_k=top_k)
+    def semantic_search(
+        self,
+        user_id: str,
+        query: str,
+        top_k: int,
+        database_id: str | None = None,
+    ) -> list[dict]:
+        selected_database = database_id.strip() if database_id else None
+        selected_database = selected_database or None
+        return self._pipeline_adapter.semantic_search(
+            user_id=user_id,
+            query=query,
+            top_k=top_k,
+            database_id=selected_database,
+        )
 
-    def ask_stream(self, user_id: str, query: str, top_k: int) -> Iterator[str]:
-        results = self.semantic_search(user_id=user_id, query=query, top_k=top_k)
-        source_names = [r["file_name"] for r in results]
-        yield from self._rag_service.build_stream(query=query, source_names=source_names)
+    def ask_stream(
+        self,
+        user_id: str,
+        query: str,
+        top_k: int,
+        database_id: str | None = None,
+    ) -> Iterator[str]:
+        try:
+            result = self._pipeline_adapter.ask(
+                user_id=user_id,
+                query=query,
+                top_k=top_k,
+                database_id=database_id,
+            )
+            source_names = [r["file_name"] for r in result.get("sources", [])]
+            answer = result.get("response", "")
+        except Exception as exc:
+            results = self.semantic_search(user_id=user_id, query=query, top_k=top_k, database_id=database_id)
+            source_names = [r["file_name"] for r in results]
+            answer = f"I found some relevant documents, but I could not generate an AI response due to an error: {exc}"
+
+        yield from self._rag_service.build_stream(
+            query=query,
+            answer=answer,
+            source_names=source_names,
+        )

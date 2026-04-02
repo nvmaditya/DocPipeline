@@ -52,6 +52,8 @@ def _write_test_config(path: Path, store_dir: Path) -> None:
                 "query:",
                 "  top_k: 5",
                 "  score_threshold: 0.0",
+                "  llm_backend: ollama",
+                "  llm_model: phi3",
             ]
         ),
         encoding="utf-8",
@@ -59,13 +61,16 @@ def _write_test_config(path: Path, store_dir: Path) -> None:
 
 
 @pytest.fixture()
-def client(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> TestClient:
+def client(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
     cfg_path = tmp_path / "backend-config.yaml"
     _write_test_config(cfg_path, tmp_path / "seed-store")
     monkeypatch.setenv("BACKEND_DOCPIPE_CONFIG", str(cfg_path))
     monkeypatch.setenv("BACKEND_USER_STORE_ROOT", str(tmp_path / "users-store"))
+    monkeypatch.setenv("BACKEND_COMMUNITY_STORE_ROOT", str(tmp_path / "community-store"))
+    monkeypatch.setenv("BACKEND_BOOKS_ROOT", str(tmp_path / "books"))
     monkeypatch.setattr(pipeline_mod, "Embedder", DummyEmbedder)
-    return TestClient(create_app())
+    with TestClient(create_app()) as test_client:
+        yield test_client
 
 
 @pytest.fixture()

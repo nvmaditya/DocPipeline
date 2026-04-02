@@ -1,161 +1,218 @@
-# Document Pipeline
+# VectorLearn — Document Intelligence Platform
 
-Full-stack document intelligence platform for local-first ingestion, semantic retrieval, and grounded Q&A.
+A full-stack AI tutoring platform. Upload documents or browse community knowledge bases, then ask grounded, source-cited questions via an SSE-streaming chat interface.
 
-The repository currently contains:
+## Stack
 
-- Core domain pipeline in `docpipe/`
-- FastAPI backend in `backend/`
-- Next.js frontend in `frontend/`
-- Legacy CLI entrypoint in `main.py`
+| Layer | Technology |
+|---|---|
+| Frontend | React + Vite + TailwindCSS (Framer Motion) |
+| API Proxy | Express.js (forwards auth, docs, search, ask, community) |
+| Backend | FastAPI + Python |
+| Pipeline | `docpipe` — extraction, chunking, embedding, FAISS, SQLite |
+| Embeddings | Ollama `bge-large` (local, OpenAI-compatible API) |
+| Vector Store | FAISS (flat index, per-user + per-book) |
+| Metadata | SQLite (per-user + per-book) |
 
-## Install
+---
 
-### Backend dependencies
+## Quick Start
+
+### 1. Prerequisites
+
+- Python 3.11+
+- Node.js 20+
+- [Ollama](https://ollama.com) installed and running
+
+```bash
+# Pull the embedding model
+ollama pull bge-large
+```
+
+### 2. Backend setup
 
 ```bash
 python -m venv .venv
-.venv\\Scripts\\activate
+.venv\Scripts\activate        # Windows
 pip install -r requirements.txt
 ```
 
-### Frontend dependencies
+### 3. Frontend setup
 
 ```bash
 cd frontend
 npm install
 ```
 
-## Quick Start (Full Stack)
-
-### One-command launcher (Windows)
+### 4. Launch (Windows)
 
 ```bash
 start-dev.cmd
 ```
 
-This launches backend and frontend in two separate terminals.
+This opens two terminals: FastAPI on `http://localhost:8000`, frontend on `http://localhost:3000`.
 
-### Backend server
+Or start manually:
 
 ```bash
+# Terminal 1 — backend
 uvicorn backend.app.main:app --reload
+
+# Terminal 2 — frontend
+cd frontend && npm run dev
 ```
 
-Run this from the repository root after activating `.venv`.
+---
 
-Backend URLs:
+## Community Knowledge Bases
 
-- API root: `http://localhost:8000`
-- Swagger docs: `http://localhost:8000/docs`
-- Health endpoint: `http://localhost:8000/health`
+Books placed in `Books/` are automatically indexed into isolated per-book vector databases.
 
-### Frontend server
+### Build indexes
 
 ```bash
-cd frontend
-npm run dev
+.venv\Scripts\python.exe build_book_databases.py
 ```
 
-Frontend URL:
+Options:
 
-- App: `http://localhost:3000`
+```
+--force                   Rebuild all indexes from scratch
+--books History.pdf       Index a specific book only
+--books-dir Books         Source folder (default: Books)
+--output-dir store/community_books   Output root (default)
+--config config.yaml      Base config (default)
+```
 
-Upload endpoints require authentication. Register and login first so the frontend can send a Bearer token for document APIs.
+The script:
+1. Checks Ollama is reachable
+2. Creates `store/community_books/<slug>/faiss.index` + `metadata.db`
+3. Removes stores for books that were deleted from `Books/`
+4. Writes `store/community_books/manifest.json` which the backend serves instantly
 
-## Configure
+### Reflection
 
-Edit `config.yaml` for model and store paths.
+Adding or removing a book from `Books/` and re-running `build_book_databases.py` is all that's needed — the Community tab reflects the manifest automatically on next API call.
 
-Recommended environment variables:
+---
 
-- `HF_TOKEN` for Hugging Face rate-limit and auth behavior
-- `BACKEND_DOCPIPE_CONFIG` for backend pipeline config path override
-- `BACKEND_USER_STORE_ROOT` for backend per-user storage root override
+## Configuration
 
-Phase 3 retrieval options:
+`config.yaml` — embedding and chunking settings:
 
-- `chunking.strategy`: `recursive` or `semantic`
-- `chunking.semantic_threshold`: split sensitivity for semantic chunking
-- `faiss.index_type`: `flat` or `hnsw`
-- `embedding.model`: defaults to `BAAI/bge-large-en-v1.5`
+```yaml
+embedding:
+  backend: github          # "github" = OpenAI-compatible (Ollama, GitHub Models)
+  model: bge-large         # Ollama model name
+  batch_size: 64
+  github_endpoint: http://localhost:11434/v1
+  github_token_env: OLLAMA_API_KEY   # set to any non-empty string for Ollama
 
-## API Surface (Current)
+chunking:
+  strategy: recursive
+  chunk_size: 380          # characters — tuned for bge-large's 512-token limit
+  chunk_overlap: 50
+```
+
+Environment variables (set in `.env`):
+
+| Variable | Purpose |
+|---|---|
+| `OLLAMA_API_KEY` | Dummy token for Ollama (any value, e.g. `ollama`) |
+| `BACKEND_DOCPIPE_CONFIG` | Override config path |
+| `BACKEND_USER_STORE_ROOT` | Override per-user store root |
+| `BACKEND_COMMUNITY_STORE_ROOT` | Override community store root |
+| `BACKEND_BOOKS_ROOT` | Override Books folder path |
+
+---
+
+## API Reference
 
 Base path: `/api/v1`
 
-- Auth
-    - `POST /api/v1/auth/register`
-    - `POST /api/v1/auth/login`
-    - `POST /api/v1/auth/logout`
-    - `GET /api/v1/auth/me`
-- Documents
-    - `POST /api/v1/docs/upload`
-    - `GET /api/v1/docs/list`
-    - `GET /api/v1/docs/{doc_id}`
-    - `DELETE /api/v1/docs/{doc_id}`
-- Search
-    - `POST /api/v1/search/semantic`
-    - `GET /api/v1/search/ask/stream`
+| Route | Method | Auth | Description |
+|---|---|---|---|
+| `/auth/register` | POST | — | Register new user |
+| `/auth/login` | POST | — | Login, returns JWT |
+| `/auth/me` | GET | ✓ | Current user info |
+| `/docs/upload` | POST | ✓ | Upload + ingest a document |
+| `/docs/list` | GET | ✓ | List user's documents |
+| `/docs/{id}` | DELETE | ✓ | Delete a document |
+| `/search/semantic` | POST | ✓ | Semantic search (`?database_id=` for community) |
+| `/search/ask/stream` | GET | ✓ | SSE ask stream (`?database_id=` for community) |
+| `/community/databases` | GET | ✓ | List indexed community books |
+
+---
 
 ## Testing
 
-### Backend integration and feature verification
-
 ```bash
-python -m pytest backend/tests -q
-python -m pytest backend/tests --cov=backend.app.api --cov-fail-under=80 --cov-report=term
-python -m pytest backend/tests --cov=backend.app.services --cov-fail-under=80 --cov-report=term
-python -m pytest backend/tests --cov=backend.app.adapters --cov-fail-under=80 --cov-report=term
+# Backend — all tests
+.venv\Scripts\python.exe -m pytest backend/tests -q
+
+# Backend — with coverage
+.venv\Scripts\python.exe -m pytest backend/tests --cov=backend.app --cov-fail-under=80 --cov-report=term
+
+# Domain pipeline tests
+.venv\Scripts\python.exe -m pytest tests/ -q
+
+# Frontend build check
+cd frontend && npm run build
 ```
 
-### Frontend integration and feature verification
+---
 
-```bash
-cd frontend
-npm run test
-npm run test:cov
-npm run build
+## Project Structure
+
 ```
+document-pipeline/
+├── Books/                        # Drop books here to index them
+├── backend/
+│   ├── app/
+│   │   ├── main.py               # FastAPI app factory
+│   │   ├── config.py             # Settings (env-driven)
+│   │   ├── dependencies.py       # FastAPI dependency injectors
+│   │   ├── api/                  # Route handlers
+│   │   │   ├── auth.py
+│   │   │   ├── community.py
+│   │   │   ├── documents.py
+│   │   │   └── search.py
+│   │   ├── services/             # Business logic
+│   │   │   ├── auth_service.py
+│   │   │   ├── community_service.py
+│   │   │   ├── document_service.py
+│   │   │   ├── rag_service.py
+│   │   │   └── search_service.py
+│   │   └── adapters/
+│   │       └── pipeline_adapter.py
+│   └── tests/
+├── docpipe/                      # Core pipeline (extraction/chunk/embed/store)
+├── frontend/
+│   └── artifacts/
+│       ├── api-server/           # Express proxy (Node.js)
+│       └── doc-workspace/        # React Vite frontend
+├── store/
+│   ├── community_books/          # Per-book FAISS+SQLite stores + manifest.json
+│   └── backend_users/            # Per-user FAISS+SQLite stores
+├── tasks/
+│   ├── todo.md                   # Task tracking
+│   └── lessons.md                # Lessons learned
+├── build_book_databases.py       # Book indexing script
+├── config.yaml                   # Pipeline configuration
+├── main.py                       # Legacy CLI
+├── start-dev.cmd                 # One-command dev launcher (Windows)
+└── requirements.txt
+```
+
+---
 
 ## CLI (Legacy)
 
+The `main.py` CLI is kept for direct pipeline testing:
+
 ```bash
-python main.py ingest --file path/to/file.pdf
-python main.py ingest --dir path/to/docs
-python main.py query "quarterly revenue"
-python main.py query "quarterly revenue" --rag
+python main.py ingest --file Books/History.pdf
+python main.py query "causes of World War 1"
+python main.py query "atomic structure" --rag
 python main.py stats
 ```
-
-## Python API (Legacy)
-
-```python
-from docpipe import Pipeline
-
-pipe = Pipeline(config="config.yaml")
-pipe.ingest("./docs")
-results = pipe.search("key findings", top_k=5)
-print(results)
-pipe.close()
-```
-
-## Current Limits
-
-- OCR for scanned PDFs is optional and best-effort (`ocr_engine` can be `none`, `surya`, or `tesseract`)
-- RAG requires `GITHUB_TOKEN` to call GitHub Models API when `--rag` is used
-
-## Retrieval Modes
-
-- Flat index: exact cosine search, best for smaller corpora
-- HNSW index: approximate nearest-neighbor search for larger corpora
-- Recursive chunking: faster, deterministic split
-- Semantic chunking: sentence-similarity-driven split for better topical coherence
-
-## RAG Mode (Phase 4)
-
-- Command: `python main.py query "your question" --rag`
-- Backend: configured by `query.llm_backend` (default: `github`)
-- Model: configured by `query.llm_model` (default: `openai/gpt-5`)
-- Auth: set `GITHUB_TOKEN` in your environment
-- Output: grounded answer + source list from retrieved chunks

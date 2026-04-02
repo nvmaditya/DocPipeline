@@ -7,15 +7,12 @@ from collections.abc import Iterator
 
 
 class RagService:
-    def build_stream(self, query: str, source_names: list[str]) -> Iterator[str]:
+    def build_stream(self, query: str, answer: str, source_names: list[str]) -> Iterator[str]:
         yield f"data: {json.dumps({'type': 'meta', 'query': query, 'sources': source_names})}\n\n"
 
-        tokens = [
-            "Analyzing retrieved context.",
-            "Building grounded response.",
-            "Streaming complete answer.",
-        ]
-        for token in tokens:
-            yield f"data: {json.dumps({'type': 'token', 'content': token})}\n\n"
+        chunk_size = 15
+        for i in range(0, len(answer), chunk_size):
+            chunk = answer[i : i + chunk_size]
+            yield f"data: {json.dumps({'type': 'chunk', 'text': chunk})}\n\n"
 
-        yield f"data: {json.dumps({'type': 'done', 'answer': ' '.join(tokens)})}\n\n"
+        yield f"data: {json.dumps({'type': 'answer', 'text': answer})}\n\n"
