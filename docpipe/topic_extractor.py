@@ -115,15 +115,12 @@ def extract_toc_from_pdf(source_file: str) -> list[str]:
 
 def classify_topics_with_llm(
     sample_chunks: list[str],
-    llm_model: str = "phi3",
+    llm_model: str = "llama-3.1-8b-instant",
+    llm_backend: str = "groq",
+    api_key: str = "",
 ) -> list[str]:
-    """Send sampled chunks to a local Ollama model to infer topic names."""
+    """Send sampled chunks to an LLM to infer topic names."""
     if not sample_chunks:
-        return ["General"]
-
-    try:
-        import ollama
-    except ImportError:
         return ["General"]
 
     numbered = "\n".join(f"[{i+1}] {chunk[:300]}" for i, chunk in enumerate(sample_chunks))
@@ -137,25 +134,66 @@ def classify_topics_with_llm(
         "JSON array of topic names:"
     )
 
+    content = ""
     try:
-        result = ollama.chat(
-            model=llm_model,
-            messages=[
-                {"role": "system", "content": "You extract topic names from text. Reply with valid JSON only."},
-                {"role": "user", "content": prompt},
-            ],
-        )
-        content = result.get("message", {}).get("content", "")
-        # Extract JSON array from response
+        if llm_backend == "groq":
+            content = _classify_with_groq(prompt, llm_model, api_key)
+        elif llm_backend == "gemini":
+            content = _classify_with_gemini(prompt, llm_model, api_key)
+        else:
+            content = _classify_with_ollama(prompt, llm_model)
+    except Exception:
+        return ["General"]
+
+    if content:
         match = re.search(r"\[.*\]", content, re.DOTALL)
         if match:
             topics = json.loads(match.group())
             if isinstance(topics, list) and all(isinstance(t, str) for t in topics):
                 return [t.strip() for t in topics if t.strip()]
-    except Exception:
-        pass
 
     return ["General"]
+
+
+def _classify_with_groq(prompt: str, model: str, api_key: str) -> str:
+    """Use Groq API (OpenAI-compatible) for topic classification."""
+    from openai import OpenAI
+    client = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=api_key)
+    response = client.chat.completions.create(
+        model=model,
+        messages=[
+            {"role": "system", "content": "You extract topic names from text. Reply with valid JSON only."},
+            {"role": "user", "content": prompt},
+        ],
+    )
+    return response.choices[0].message.content or ""
+
+
+def _classify_with_gemini(prompt: str, model: str, api_key: str) -> str:
+    """Use Gemini API for topic classification."""
+    from google import genai
+    client = genai.Client(api_key=api_key)
+    response = client.models.generate_content(
+        model=model,
+        contents=prompt,
+        config={
+            "system_instruction": "You extract topic names from text. Reply with valid JSON only.",
+        },
+    )
+    return response.text or ""
+
+
+def _classify_with_ollama(prompt: str, model: str) -> str:
+    """Use Ollama for topic classification."""
+    import ollama
+    result = ollama.chat(
+        model=model,
+        messages=[
+            {"role": "system", "content": "You extract topic names from text. Reply with valid JSON only."},
+            {"role": "user", "content": prompt},
+        ],
+    )
+    return result.get("message", {}).get("content", "")
 
 
 # ---------------------------------------------------------------------------
@@ -213,7 +251,9 @@ def extract_topics(
     chunk_ids: list[int],
     chunk_texts: list[str],
     embed_fn,
-    llm_model: str = "phi3",
+    llm_model: str = "llama-3.1-8b-instant",
+    llm_backend: str = "groq",
+    api_key: str = "",
 ) -> list[Topic]:
     """Run the full 3-stage topic extraction pipeline.
 
@@ -222,7 +262,9 @@ def extract_topics(
         chunk_ids: List of chunk IDs from the SQLite store
         chunk_texts: Corresponding chunk texts
         embed_fn: Callable that takes list[str] and returns embeddings array
-        llm_model: Ollama model name for Stage 2 fallback
+        llm_model: Model name for Stage 2 fallback
+        llm_backend: LLM backend to use ("groq", "gemini", or "ollama")
+        api_key: API key for the LLM backend
     """
     # --- Stage 1: PDF TOC ---
     topic_names = extract_toc_from_pdf(source_file)
@@ -236,7 +278,12 @@ def extract_topics(
         else:
             step = n // 20
             sample = [chunk_texts[i] for i in range(0, n, step)][:20]
-        topic_names = classify_topics_with_llm(sample, llm_model=llm_model)
+        topic_names = classify_topics_with_llm(
+            sample,
+            llm_model=llm_model,
+            llm_backend=llm_backend,
+            api_key=api_key,
+        )
 
     # --- Stage 3: Semantic assignment ---
     return assign_chunks_to_topics(topic_names, chunk_ids, chunk_texts, embed_fn)

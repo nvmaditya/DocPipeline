@@ -41,7 +41,7 @@ pip install -r requirements.txt
 
 ```bash
 cd frontend
-npm install
+pnpm install
 ```
 
 ### 4. Launch (Windows)
