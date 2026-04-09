@@ -14,6 +14,7 @@ import Ask from "@/pages/Ask";
 import Community from "@/pages/Community";
 import CreateModule from "@/pages/CreateModule";
 import BookModules from "@/pages/BookModules";
+import StudyTopic from "@/pages/StudyTopic";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,6 +35,7 @@ function Router() {
       <Route path="/community" component={Community} />
       <Route path="/create-module" component={CreateModule} />
       <Route path="/book-modules/:databaseId" component={BookModules} />
+      <Route path="/study/:databaseId/:topicName" component={StudyTopic} />
       <Route component={NotFound} />
     </Switch>
   );

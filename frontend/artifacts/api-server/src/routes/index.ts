@@ -5,6 +5,7 @@ import documentsRouter from "./documents";
 import searchRouter from "./search";
 import askRouter from "./ask";
 import communityRouter from "./community";
+import studyRouter from "./study";
 
 const router: IRouter = Router();
 
@@ -14,5 +15,6 @@ router.use(documentsRouter);
 router.use(searchRouter);
 router.use(askRouter);
 router.use(communityRouter);
+router.use(studyRouter);
 
 export default router;

@@ -12,12 +12,14 @@ from .api.auth import router as auth_router
 from .api.community import router as community_router
 from .api.documents import router as docs_router
 from .api.search import router as search_router
+from .api.study import router as study_router
 from .config import get_settings
 from .services.auth_service import AuthService
 from .services.community_service import CommunityService
 from .services.document_service import DocumentService
 from .services.rag_service import RagService
 from .services.search_service import SearchService
+from .services.study_service import StudyService
 
 
 def create_app() -> FastAPI:
@@ -39,6 +41,7 @@ def create_app() -> FastAPI:
         pipeline_adapter=pipeline_adapter,
         rag_service=rag_service,
     )
+    study_service = StudyService(pipeline_adapter=pipeline_adapter)
 
     @asynccontextmanager
     async def lifespan(_: FastAPI):
@@ -61,6 +64,7 @@ def create_app() -> FastAPI:
     app.state.community_service = community_service
     app.state.document_service = document_service
     app.state.search_service = search_service
+    app.state.study_service = study_service
     app.state.pipeline_adapter = pipeline_adapter
 
     @app.get("/health")
@@ -71,6 +75,7 @@ def create_app() -> FastAPI:
     app.include_router(community_router)
     app.include_router(docs_router)
     app.include_router(search_router)
+    app.include_router(study_router)
 
     return app
 

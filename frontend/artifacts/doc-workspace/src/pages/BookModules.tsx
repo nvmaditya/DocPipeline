@@ -2,11 +2,9 @@ import { useState, useEffect } from "react";
 import { Layout } from "@/components/Layout";
 import { useLocation, useRoute } from "wouter";
 import { motion } from "framer-motion";
-import { useChatContext } from "@/context/ChatContext";
 import { useAuth } from "@/context/AuthContext";
 import {
   BookOpen,
-  MessageSquare,
   ChevronRight,
   Loader2,
   AlertCircle,
@@ -55,7 +53,6 @@ export default function BookModules() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [, navigate] = useLocation();
-  const { openChatFromCommunity } = useChatContext();
   const { user, token, openAuthModal } = useAuth();
 
   useEffect(() => {
@@ -78,16 +75,12 @@ export default function BookModules() {
       .finally(() => setLoading(false));
   }, [databaseId, user]);
 
-  const handleAskAboutTopic = (topicName: string) => {
+  const handleStudyTopic = (topicName: string) => {
     if (!user) {
       openAuthModal("signup");
       return;
     }
-    openChatFromCommunity(
-      `${formatTitle(data?.title ?? databaseId)} — ${topicName}`,
-      databaseId,
-    );
-    navigate("/ask");
+    navigate(`/study/${databaseId}/${encodeURIComponent(topicName)}`);
   };
 
   const totalChunks = data?.topics.reduce((s, t) => s + t.chunk_count, 0) ?? 0;
@@ -195,13 +188,13 @@ export default function BookModules() {
 
                       {/* Study button */}
                       <button
-                        onClick={() => handleAskAboutTopic(topic.name)}
+                        onClick={() => handleStudyTopic(topic.name)}
                         className={cn(
                           "w-full flex items-center justify-center gap-2 font-semibold text-sm py-2.5 rounded-xl border transition-all group/btn",
                           color.bg, color.border, color.text, color.hover,
                         )}
                       >
-                        <MessageSquare className="w-4 h-4" />
+                        <BookOpen className="w-4 h-4" />
                         Study This Topic
                         <ChevronRight className="w-4 h-4 opacity-0 -translate-x-1 group-hover/btn:opacity-100 group-hover/btn:translate-x-0 transition-all" />
                       </button>

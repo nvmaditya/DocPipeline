@@ -303,9 +303,11 @@ class PipelineAdapter:
         chunk_ids = [c["chunk_id"] for c in all_chunks]
         chunk_texts = [c["chunk_text"] for c in all_chunks]
 
-        # Get llm_model from config
+        # Get LLM settings from config
         query_cfg = self._base_config.get("query", {})
-        llm_model = str(query_cfg.get("llm_model", "phi3"))
+        llm_model = str(query_cfg.get("llm_model", "llama-3.1-8b-instant"))
+        llm_backend = str(query_cfg.get("llm_backend", "groq"))
+        api_key = str(query_cfg.get("groq_api_key", "") or query_cfg.get("gemini_api_key", ""))
 
         # Run 3-stage extraction
         topics = extract_topics(
@@ -314,6 +316,8 @@ class PipelineAdapter:
             chunk_texts=chunk_texts,
             embed_fn=pipe.embedder.encode,
             llm_model=llm_model,
+            llm_backend=llm_backend,
+            api_key=api_key,
         )
 
         # Persist to SQLite

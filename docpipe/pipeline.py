@@ -165,6 +165,16 @@ class Pipeline:
             response = llm_client(prompt, model)
             return {"response": response, "sources": sources}
 
+        if backend == "groq":
+            groq_api_key = str(query_cfg.get("groq_api_key", ""))
+            response = self._ask_with_groq(prompt=prompt, model=model, api_key=groq_api_key)
+            return {"response": response, "sources": sources}
+
+        if backend == "gemini":
+            gemini_api_key = str(query_cfg.get("gemini_api_key", ""))
+            response = self._ask_with_gemini(prompt=prompt, model=model, api_key=gemini_api_key)
+            return {"response": response, "sources": sources}
+
         if backend == "github":
             response = self._ask_with_github_models(prompt=prompt, model=model, endpoint=github_endpoint, token_env=github_token_env)
             return {"response": response, "sources": sources}
@@ -185,6 +195,41 @@ class Pipeline:
             response = result.get("message", {}).get("content", "")
 
         return {"response": response, "sources": sources}
+
+    def _ask_with_groq(self, prompt: str, model: str, api_key: str) -> str:
+        if not api_key or api_key == "PASTE_YOUR_GROQ_API_KEY_HERE":
+            raise RuntimeError("Groq API key not configured. Set groq_api_key in config.yaml.")
+
+        from openai import OpenAI
+
+        client = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=api_key)
+        response = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": "You are a retrieval assistant. Stay grounded in provided context and cite sources."},
+                {"role": "user", "content": prompt},
+            ],
+        )
+        return response.choices[0].message.content or ""
+
+    def _ask_with_gemini(self, prompt: str, model: str, api_key: str) -> str:
+        if not api_key or api_key == "PASTE_YOUR_GEMINI_API_KEY_HERE":
+            raise RuntimeError("Gemini API key not configured. Set gemini_api_key in config.yaml.")
+
+        try:
+            from google import genai
+        except Exception as exc:
+            raise RuntimeError("google-genai package is required. Run: pip install google-genai") from exc
+
+        client = genai.Client(api_key=api_key)
+        response = client.models.generate_content(
+            model=model,
+            contents=prompt,
+            config={
+                "system_instruction": "You are a retrieval assistant. Stay grounded in provided context and cite sources.",
+            },
+        )
+        return response.text or ""
 
     def _ask_with_github_models(self, prompt: str, model: str, endpoint: str, token_env: str) -> str:
         token = os.getenv(token_env)

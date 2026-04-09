@@ -32,5 +32,7 @@ query:
     top_k: 5
     score_threshold: 0.0
     use_llm: true
-    llm_backend: ollama
-    llm_model: phi3
+    llm_backend: groq
+    llm_model: llama-3.1-8b-instant
+    # ── PASTE YOUR GROQ API KEY BELOW ──
+    groq_api_key: PASTE_YOUR_GROQ_API_KEY_HERE
